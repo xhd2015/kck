@@ -39,7 +39,7 @@ for when/why and agent workflows, not a full flag encyclopedia.
 - `list` — live + store list; `kck grok list` for iTerm-hosted Grok ids
 - `open` — focus hosting tab or resume; `--tab` / `--tab-index`
 - `snapshot` — capture visible pane text (agent-run TTY when managed, else iTerm)
-- `send` — type into hosting pane; `--open` resume-then-send
+- `send` — type into hosting pane; `--open` resume-then-send (agent-run prefer; `--no-agent-run` to force bare grok)
 - `messages` — recent coalesced chat (msgfmt-style; `--limit` / `--offset-from-end`)
 - `info` — session detail + Active block
 - `status` — dual-signal liveness + session path

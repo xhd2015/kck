@@ -25,6 +25,8 @@ L2 only — injectable `GrokHome` + `GrokSendOpts` (SendFake). No live iTerm.
 - One hosting tab → `sent to session …`.
 - No live host → `Error: no hosting iTerm tab …`.
 - `--open` resume then send → two stdout lines.
+- `--open` + agent-run live → prefer send via agent-run (no grok --resume).
+- `--open --no-agent-run` forces bare grok --resume even when managed.
 - `--open --tab` → usage error.
 - `--tab N` → send to resolved tab.
 - Flag opts plumbed into SendText.
@@ -50,6 +52,9 @@ grok/send/
 ├── send-exactly-one/
 ├── no-live-fails/
 ├── open-resume-then-send/
+├── open-agent-run/
+│   ├── live-send/
+│   └── no-agent-run/
 ├── open-with-tab-rejected/
 ├── tab-send/
 ├── opts-flags/
@@ -77,6 +82,8 @@ grok/send/
 | `send-exactly-one/` | `sent to session`; SendText called. |
 | `no-live-fails/` | Hard error; SendText not called. |
 | `open-resume-then-send/` | Open + sent lines; opener + SendText. |
+| `open-agent-run/live-send/` | Prefer live agent-run send; no grok --resume. |
+| `open-agent-run/no-agent-run/` | `--no-agent-run` forces bare grok --resume. |
 | `open-with-tab-rejected/` | Usage error. |
 | `tab-send/` | `--tab 2` sends. |
 | `opts-flags/` | Focus/NoSubmit/NoCtrlU plumbed. |
@@ -121,6 +128,9 @@ type Request struct {
 	CurrentSessionID string
 	ControllingTTY   string
 	AfterOpenHost    bool
+	NoAgentRun       bool
+	AgentRunByID     map[string]*sessions.AgentRunOpenResult
+	AgentRunErr      error
 
 	// CronClock, when non-zero, injects GrokCronNow/Sleep/Loc (UTC) for --cron.
 	CronClock time.Time
@@ -129,12 +139,13 @@ type Request struct {
 }
 
 type Response struct {
-	Stdout    string
-	Stderr    string
-	ErrText   string
-	ExitCode  int
-	SendCalls []sessions.SendCall
-	Opened    []string
+	Stdout        string
+	Stderr        string
+	ErrText       string
+	ExitCode      int
+	SendCalls     []sessions.SendCall
+	Opened        []string
+	AgentRunCalls []string
 }
 
 func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
@@ -148,6 +159,8 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 		},
 		CurrentSessionID: req.CurrentSessionID,
 		ControllingTTY:   req.ControllingTTY,
+		AgentRunByID:     req.AgentRunByID,
+		AgentRunErr:      req.AgentRunErr,
 	}
 	if req.AfterOpenHost {
 		sid := req.SessionID
@@ -165,6 +178,7 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 	}
 	var stdout, stderr bytes.Buffer
 	sendOpts := fake.SendOpts()
+	sendOpts.NoAgentRun = req.NoAgentRun
 	if req.FailSendOnTick > 0 {
 		orig := sendOpts.SendText
 		n := 0
@@ -195,10 +209,11 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 	}
 	err := run.MainWith(runOpts)
 	resp := &Response{
-		Stdout:    stdout.String(),
-		Stderr:    stderr.String(),
-		SendCalls: append([]sessions.SendCall(nil), fake.SendCalls...),
-		Opened:    append([]string(nil), fake.Opened...),
+		Stdout:        stdout.String(),
+		Stderr:        stderr.String(),
+		SendCalls:     append([]sessions.SendCall(nil), fake.SendCalls...),
+		Opened:        append([]string(nil), fake.Opened...),
+		AgentRunCalls: append([]string(nil), fake.AgentRunCalls...),
 	}
 	if err != nil {
 		resp.ErrText = err.Error()

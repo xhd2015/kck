@@ -12,8 +12,8 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	assertSuccess(t, resp)
 	lower := strings.ToLower(resp.Stdout)
 	for _, want := range []string{
-		"--session-id", "--tab", "--no-submit", "--focus", "--no-ctrl-u", "--open", "--cron",
-		"--enter", "--up", "--ctrl-c", "--esc", "--text",
+		"--session-id", "--tab", "--no-submit", "--focus", "--no-ctrl-u", "--open", "--no-agent-run", "--cron",
+		"--enter", "--up", "--ctrl-c", "--esc", "--text", "agent-run",
 	} {
 		if !strings.Contains(lower, want) {
 			t.Fatalf("send help must document %q:\n%s", want, resp.Stdout)

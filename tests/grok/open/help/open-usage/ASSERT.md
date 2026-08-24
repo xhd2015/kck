@@ -11,7 +11,7 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	assertNoHarnessErr(t, err)
 	assertSuccess(t, resp)
 	out := resp.Stdout
-	for _, want := range []string{"kck grok open", "--tab", "--tab-index", "--index", "grok --resume", "--dry-run"} {
+	for _, want := range []string{"kck grok open", "--tab", "--tab-index", "--index", "grok --resume", "--no-agent-run", "--dry-run", "agent-run"} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("open help missing %q:\n%s", want, out)
 		}

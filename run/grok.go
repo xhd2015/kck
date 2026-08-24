@@ -63,6 +63,8 @@ const grokOpenHelp = `Usage: kck grok open (<session-id> | --tab SEL | --tab-ind
 
 Focus the iTerm2 tab that already hosts this Grok session when one exists.
 Otherwise open a new iTerm2 window and run: grok --resume <session-id>
+When the Grok id is bound in agent-run, prefers agent-run (live → focus;
+exited → agent-run resume) instead of bare grok --resume.
 
 Session source (exactly one):
   <session-id>          explicit Grok session id
@@ -73,6 +75,7 @@ Options:
   --index N             select candidate N when multiple tabs host the same session
                         (positional <session-id> only; not with --tab/--tab-index)
   --dir DIR             workspace for resume (default: session cwd)
+  --no-agent-run        force bare grok --resume (skip agent-run prefer)
   --dry-run             resolve only; do not focus or open a window
   -h,--help             show help
 
@@ -109,6 +112,9 @@ Type text and/or key sequences into the live iTerm2 pane that hosts a Grok sessi
 Same write-text path as: kool iterm2 session <iterm-uuid> send …
 By default requires a hosting iTerm tab. With --open, resumes in a new
 window when no host is found, waits for the tab to appear, then sends.
+When the Grok id is bound in agent-run, --open prefers agent-run
+auto-send-or-resume (live → send queue; exited → agent-run resume) instead
+of bare grok --resume.
 
 Session source (exactly one):
   --session-id ID       Grok session id
@@ -122,6 +128,7 @@ Options:
   --focus               switch to the session's window/tab before writing
   --no-ctrl-u           do not prefix Ctrl-U (default prefixes Ctrl-U)
   --open                if no hosting tab: resume in a new window, then send
+  --no-agent-run        with --open: force bare grok --resume (skip agent-run prefer)
   --dir DIR             workspace for --open resume (default: session cwd)
   --dry-run             resolve only; do not open or call SendText
   --enter               append Enter (\n) to the send sequence

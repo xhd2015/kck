@@ -24,6 +24,7 @@ L2 only — injectable `GrokHome` + `GrokOpenOpts` (OpenFake). No live iTerm.
 - Missing session id → usage error with `Error:`.
 - One hosting tab → `focused: window W, tab T`.
 - No live host → `opened: new window; resuming <id>` via injectable opener.
+- Agent-run-managed exited → `opened: new window; agent-run resume <ar-id>`.
 - `--tab N` → focus resolved tab (no resume).
 
 ## Version
@@ -42,6 +43,7 @@ grok/open/
 ├── unknown-session/
 ├── focus-exactly-one/
 ├── resume-no-live/
+├── agent-run-resume/
 └── tab-focus/
 ```
 
@@ -56,6 +58,7 @@ grok/open/
 | `unknown-session/` | `Error: grok session not found`. |
 | `focus-exactly-one/` | Focuses; opener not called. |
 | `resume-no-live/` | Opens resume window; no focus. |
+| `agent-run-resume/` | Prefer agent-run resume window when managed. |
 | `tab-focus/` | `--tab 2` focuses resolved tab. |
 
 ## How to Run
@@ -88,15 +91,19 @@ type Request struct {
 	ITerm            []iterm2.SessionRef
 	CurrentSessionID string
 	ControllingTTY   string
+	NoAgentRun       bool
+	AgentRunByID     map[string]*sessions.AgentRunOpenResult
+	AgentRunErr      error
 }
 
 type Response struct {
-	Stdout   string
-	Stderr   string
-	ErrText  string
-	ExitCode int
-	Focused  []string
-	Opened   []string
+	Stdout        string
+	Stderr        string
+	ErrText       string
+	ExitCode      int
+	Focused       []string
+	Opened        []string
+	AgentRunCalls []string
 }
 
 func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
@@ -110,10 +117,13 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 		},
 		CurrentSessionID: req.CurrentSessionID,
 		ControllingTTY:   req.ControllingTTY,
+		AgentRunByID:     req.AgentRunByID,
+		AgentRunErr:      req.AgentRunErr,
 	}
 	var stdout, stderr bytes.Buffer
 	opts := fake.OpenOpts()
 	opts.Stderr = &stderr
+	opts.NoAgentRun = req.NoAgentRun
 	err := run.MainWith(run.Options{
 		Args:         append([]string(nil), req.Args...),
 		Stdout:       &stdout,
@@ -122,10 +132,11 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 		GrokOpenOpts: opts,
 	})
 	resp := &Response{
-		Stdout:  stdout.String(),
-		Stderr:  stderr.String(),
-		Focused: append([]string(nil), fake.Focused...),
-		Opened:  append([]string(nil), fake.Opened...),
+		Stdout:        stdout.String(),
+		Stderr:        stderr.String(),
+		Focused:       append([]string(nil), fake.Focused...),
+		Opened:        append([]string(nil), fake.Opened...),
+		AgentRunCalls: append([]string(nil), fake.AgentRunCalls...),
 	}
 	if err != nil {
 		resp.ErrText = err.Error()
