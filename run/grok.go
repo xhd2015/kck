@@ -112,9 +112,9 @@ Type text and/or key sequences into the live iTerm2 pane that hosts a Grok sessi
 Same write-text path as: kool iterm2 session <iterm-uuid> send …
 By default requires a hosting iTerm tab. With --open, resumes in a new
 window when no host is found, waits for the tab to appear, then sends.
-When the Grok id is bound in agent-run, --open prefers agent-run
-auto-send-or-resume (live → send queue; exited → agent-run resume) instead
-of bare grok --resume.
+When the Grok id is bound in agent-run, --session-id prefers agent-run
+auto-send-or-resume directly (live → send queue; exited → resume) with no
+iTerm discovery or SendText. --tab / --tab-index still target iTerm panes.
 
 Session source (exactly one):
   --session-id ID       Grok session id
@@ -128,7 +128,7 @@ Options:
   --focus               switch to the session's window/tab before writing
   --no-ctrl-u           do not prefix Ctrl-U (default prefixes Ctrl-U)
   --open                if no hosting tab: resume in a new window, then send
-  --no-agent-run        with --open: force bare grok --resume (skip agent-run prefer)
+  --no-agent-run        force iTerm path (skip agent-run prefer for --session-id)
   --dir DIR             workspace for --open resume (default: session cwd)
   --dry-run             resolve only; do not open or call SendText
   --enter               append Enter (\n) to the send sequence

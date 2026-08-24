@@ -25,8 +25,8 @@ L2 only — injectable `GrokHome` + `GrokSendOpts` (SendFake). No live iTerm.
 - One hosting tab → `sent to session …`.
 - No live host → `Error: no hosting iTerm tab …`.
 - `--open` resume then send → two stdout lines.
-- `--open` + agent-run live → prefer send via agent-run (no grok --resume).
-- `--open --no-agent-run` forces bare grok --resume even when managed.
+- Agent-run-managed `--session-id` → prefer agent-run even with iTerm host (no SendText).
+- `--no-agent-run` forces bare grok --resume even when managed.
 - `--open --tab` → usage error.
 - `--tab N` → send to resolved tab.
 - Flag opts plumbed into SendText.

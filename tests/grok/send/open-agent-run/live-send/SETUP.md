@@ -7,6 +7,8 @@ func Setup(t *testing.T, d *session.Doctest, req *Request) error {
 	_ = d
 	req.SessionID = fixtureKckSendSessionID
 	writeKckSendSession(t, req)
+	addLiveGrok(req, 4242, "/dev/ttys148")
+	req.ITerm = oneITermTab()
 	req.AgentRunByID = map[string]*sessions.AgentRunOpenResult{
 		req.SessionID: {
 			AgentRunSessionID: "ar-kck-live",

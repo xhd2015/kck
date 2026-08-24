@@ -21,8 +21,8 @@ Same write path as `kool iterm2 session <uuid> send …` (`iterm2.SendText`).
 
 | Flag | Effect |
 |------|--------|
-| `--open` | If no host: resume in a new window, wait up to 120s, then send. Agent-run-managed Grok ids prefer agent-run auto-send-or-resume (live → send queue; exited → agent-run resume) instead of bare `grok --resume`. |
-| `--no-agent-run` | With `--open`: force bare `grok --resume` (skip agent-run prefer) |
+| `--open` | If no host: resume in a new window, wait up to 120s, then send (bare grok / unmanaged only) |
+| `--no-agent-run` | Force iTerm path for `--session-id` (skip agent-run prefer) |
 | `--focus` | Focus the tab before typing |
 | `--no-ctrl-u` | Do not clear the line with Ctrl-U before typing |
 | `--no-submit` | Type without submitting (no trailing Enter) |
@@ -57,9 +57,8 @@ Examples: `every-1h`, `every-1h-at-4m`, `every-5m-until-19h00m`,
 ## Success stdout
 
 - Default: `sent to session <id>` (or tab-oriented wording).
-- With `--open` after resume: two lines — open/resume ack, then sent line.
-- With `--open` into a **live** agent-run session: one `sent to session …` line (stderr may note `--open` ignored).
-- With `--open` agent-run resume: `opened: new window; agent-run resume <ar-id>` then sent line.
+- With `--open` after bare grok resume: two lines — open/resume ack, then sent line.
+- Agent-run-managed `--session-id`: one `sent to session …` line via agent-run queue/resume (no iTerm discovery or SendText). `--tab` / `--tab-index` still use iTerm.
 - With `--cron`: each tick prints `sent…`, then `next <time> (<expr>)`; ends with `cron done: until reached` when Until expires.
 
 ## Agent tips

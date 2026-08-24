@@ -1,6 +1,6 @@
 ## Expected
 
-- Prefer live agent-run; single sent line; no grok `--resume`.
+- Prefer live agent-run even with iTerm host; single sent line; no grok `--resume`.
 
 ```go
 import (
