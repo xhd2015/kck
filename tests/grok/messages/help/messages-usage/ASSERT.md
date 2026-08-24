@@ -19,6 +19,7 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 		"512",
 		"8192",
 		"--json",
+		"YYYY-MM-DD HH:MM:SS",
 	} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("messages help missing %q:\n%s", want, out)

@@ -12,8 +12,7 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	for _, want := range []string{
 		"[user] : u1",
 		"[thinking] : th1",
-		"[tool] :",
-		"tool=shell",
+		"[tool] : run_terminal_command: echo hi",
 		"[assistant] : a1",
 	} {
 		assertContains(t, out, want, "stdout")

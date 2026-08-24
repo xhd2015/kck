@@ -71,18 +71,19 @@ func writeKckMessagesSession(t *testing.T, req *Request, updates string) {
 }
 
 func fixtureMultiTurnUpdates() string {
+	// Outer timestamp is unix seconds (converter normalizes to ms).
 	return strings.Join([]string{
-		`{"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u0"}}`,
-		`{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a0"}}`,
-		`{"sessionUpdate":"turn_completed"}`,
-		`{"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u1"}}`,
-		`{"sessionUpdate":"agent_thought_chunk","content":{"type":"text","text":"th1"}}`,
-		`{"sessionUpdate":"tool_call","toolCallId":"t1","kind":"shell","title":"echo hi"}`,
-		`{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a1"}}`,
-		`{"sessionUpdate":"turn_completed"}`,
-		`{"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u2"}}`,
-		`{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a2"}}`,
-		`{"sessionUpdate":"turn_completed"}`,
+		`{"timestamp":1785493071,"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u0"}}`,
+		`{"timestamp":1785493072,"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a0"}}`,
+		`{"timestamp":1785493072,"sessionUpdate":"turn_completed"}`,
+		`{"timestamp":1785493073,"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u1"}}`,
+		`{"timestamp":1785493074,"sessionUpdate":"agent_thought_chunk","content":{"type":"text","text":"th1"}}`,
+		`{"timestamp":1785493075,"sessionUpdate":"tool_call","toolCallId":"t1","title":"run_terminal_command","rawInput":{"command":"echo hi","description":"say hi"},"_meta":{"x.ai/tool":{"name":"run_terminal_command","kind":"execute"}}}`,
+		`{"timestamp":1785493076,"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a1"}}`,
+		`{"timestamp":1785493076,"sessionUpdate":"turn_completed"}`,
+		`{"timestamp":1785493077,"sessionUpdate":"user_message_chunk","content":{"type":"text","text":"u2"}}`,
+		`{"timestamp":1785493078,"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"a2"}}`,
+		`{"timestamp":1785493078,"sessionUpdate":"turn_completed"}`,
 	}, "\n")
 }
 

@@ -31,6 +31,8 @@ const grokMessagesHelp = `Usage: kck grok messages (<session-id> | --tab SEL | -
 
 Print the most recent coalesced Grok chat messages (msgfmt-style),
 with per-kind rune caps (user 4096, tool 128, thinking 512, response 8192).
+Each line is prefixed with a local [YYYY-MM-DD HH:MM:SS] timestamp, or [—]
+when the wire time is unknown.
 
 Session source (exactly one):
   <session-id>          explicit Grok session id

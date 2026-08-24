@@ -43,6 +43,7 @@ grok/messages/
 ├── offset-pages/
 ├── offset-past-end/
 ├── kinds-order/
+├── timestamp-prefix/
 └── json/
 ```
 
@@ -52,7 +53,7 @@ grok/messages/
 |---|---|
 | `help/root-lists-messages/` | `kck -h` mentions `grok messages`. |
 | `help/grok-usage/` | `kck grok --help` lists `messages`. |
-| `help/messages-usage/` | documents `--limit`, `--offset-from-end 32` example, caps. |
+| `help/messages-usage/` | documents `--limit`, `--offset-from-end 32` example, caps, timestamps. |
 | `missing-session-source/` | `Error:` usage. |
 | `unknown-session/` | `Error: grok session not found`. |
 | `empty/` | `(no messages)`. |
@@ -60,7 +61,8 @@ grok/messages/
 | `offset-pages/` | `--offset-from-end 2 --limit 2` is the prior page. |
 | `offset-past-end/` | offset ≥ total → `(no messages)`. |
 | `kinds-order/` | user / thinking / tool / assistant labels in order. |
-| `json/` | valid JSON; fields total/offset/limit/messages. |
+| `timestamp-prefix/` | local `[YYYY-MM-DD HH:MM:SS]` from wire times. |
+| `json/` | valid JSON; fields total/offset/limit/messages (+ timestamp). |
 
 ## How to Run
 
@@ -73,17 +75,20 @@ doctest test ./tests/grok/messages
 import (
 	"bytes"
 	"testing"
+	"time"
 
+	"github.com/xhd2015/agent-pro/agent/grok/sessions"
 	"github.com/xhd2015/doctest/session"
 
 	"kck/run"
 )
 
 type Request struct {
-	Args     []string
-	GrokHome string
-	TempDir  string
+	Args      []string
+	GrokHome  string
+	TempDir   string
 	SessionID string
+	Loc       *time.Location // nil → time.Local; injectable for timestamp asserts
 }
 
 type Response struct {
@@ -97,11 +102,16 @@ func Run(t *testing.T, d *session.Doctest, req *Request) (*Response, error) {
 	t.Helper()
 	_ = d
 	var stdout, stderr bytes.Buffer
+	msgOpts := &sessions.MessagesOpts{}
+	if req.Loc != nil {
+		msgOpts.Loc = req.Loc
+	}
 	err := run.MainWith(run.Options{
-		Args:     append([]string(nil), req.Args...),
-		Stdout:   &stdout,
-		Stderr:   &stderr,
-		GrokHome: req.GrokHome,
+		Args:             append([]string(nil), req.Args...),
+		Stdout:           &stdout,
+		Stderr:           &stderr,
+		GrokHome:         req.GrokHome,
+		GrokMessagesOpts: msgOpts,
 	})
 	resp := &Response{Stdout: stdout.String(), Stderr: stderr.String()}
 	if err != nil {

@@ -17,6 +17,7 @@ kck grok messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
 - Coalesces chunks into user / thinking / tool / response messages.
 - Per-kind rune caps with U+2026 ellipsis: user 4096, tool 128, thinking 512,
   response 8192.
+- Each line prefixed with local `[YYYY-MM-DD HH:MM:SS]`, or `[—]` if unknown.
 - Paging: skip `--offset-from-end` newest, then take last `--limit` (default 32).
 
 ## Useful flags

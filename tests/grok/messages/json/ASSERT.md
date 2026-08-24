@@ -19,8 +19,9 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 		OffsetFromEnd int    `json:"offset_from_end"`
 		Limit         int    `json:"limit"`
 		Messages      []struct {
-			Kind string `json:"kind"`
-			Text string `json:"text"`
+			Kind      string `json:"kind"`
+			Text      string `json:"text"`
+			Timestamp string `json:"timestamp"`
 		} `json:"messages"`
 	}
 	if err := json.Unmarshal([]byte(resp.Stdout), &payload); err != nil {
@@ -40,6 +41,9 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	}
 	if payload.Messages[1].Kind != "response" || payload.Messages[1].Text != "a1" {
 		t.Fatalf("want trailing a1 response: %+v", payload.Messages)
+	}
+	if payload.Messages[1].Timestamp == "" {
+		t.Fatalf("want RFC3339 timestamp on response: %+v", payload.Messages[1])
 	}
 }
 ```
