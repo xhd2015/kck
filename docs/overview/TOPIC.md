@@ -37,4 +37,4 @@ errors use `Error:` on stderr and non-zero exit.
 ## See also
 
 - `list` — filters and JSON; also `kck grok list` for iTerm-hosted Grok ids
-- `open` / `send` / `snapshot` / `info` / `status` — Grok ops
+- `open` / `send` / `snapshot` / `info` / `status` / `resolve` — Grok ops

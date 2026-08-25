@@ -29,4 +29,5 @@ var SkillMD string
 //go:embed messages
 //go:embed info
 //go:embed status
+//go:embed resolve
 var TreeFS embed.FS

@@ -1,6 +1,6 @@
 # kck
 
-List live iTerm agent panes and operate Grok sessions (open, snapshot, send, messages, info, status). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
+List live iTerm agent panes and operate Grok sessions (open, snapshot, send, messages, info, status, resolve). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
 
 ## Requirements
 
@@ -54,6 +54,7 @@ Domain flags: `kck --help` and `kck grok <command> --help`.
 | `kck grok send` | Type into hosting pane (agent-run when managed) |
 | `kck grok messages` | Recent coalesced chat |
 | `kck grok info` / `status` | Detail + Active; dual-signal liveness |
+| `kck grok resolve` | Resolve id (ancestor walk or `--tab`) |
 | `kck skill` | Show/install embedded skill docs |
 
 ## Docs
@@ -69,6 +70,7 @@ kck skill --show snapshot
 kck skill --show messages
 kck skill --show info
 kck skill --show status
+kck skill --show resolve
 ```
 
 Source topics: [`docs/SKILL.md`](docs/SKILL.md) and [`docs/*/TOPIC.md`](docs/).

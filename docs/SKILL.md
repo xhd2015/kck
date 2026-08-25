@@ -2,9 +2,9 @@
 name: kck
 description: >-
   kck lists live iTerm agent panes (or agent-run store sessions with --home)
-  and operates Grok sessions: open/focus, snapshot, send, messages, info, status.
-  Use when the user runs kck, asks about live agent tabs, or /kck.
-  Load topics: kck skill --show <topic>
+  and operates Grok sessions: open/focus, snapshot, send, messages, info,
+  status, resolve. Use when the user runs kck, asks about live agent tabs, or
+  /kck. Load topics: kck skill --show <topic>
 ---
 
 # kck — live agent panes and Grok session ops
@@ -18,7 +18,7 @@ This skill is an **index**. Load detailed guidance with
   stream rows as windows are scanned.
 - **`--home PATH`** — list agent-run store sessions under `PATH/sessions`.
 - **`kck grok …`** — list iTerm-hosted Grok ids, open/focus, snapshot, send,
-  messages, info, status (thin wrappers over agent-pro session helpers).
+  messages, info, status, resolve (thin wrappers over agent-pro session helpers).
 
 Domain flags live in `kck --help` and `kck grok <cmd> --help`. This skill is
 for when/why and agent workflows, not a full flag encyclopedia.
@@ -29,7 +29,8 @@ for when/why and agent workflows, not a full flag encyclopedia.
    iTerm only). Use `kck --home <agent-run-home>` for the agent-run store.
 2. Use `--needs-confirm` / `--sendable` when filtering attention vs idle.
 3. For a known Grok session: `kck grok info|status <id>`, then
-   `open` / `snapshot` / `messages` / `send` as needed.
+   `open` / `snapshot` / `messages` / `send` as needed. When the id is unknown
+   in-context, `kck grok resolve` (ancestor or `--tab`) yields a bare id.
 4. Prefer `kck grok send "…" --session-id <id>` over inventing list-mode send
    flags (root list has no `--send`).
 
@@ -43,6 +44,7 @@ for when/why and agent workflows, not a full flag encyclopedia.
 - `messages` — recent coalesced chat (msgfmt-style; `--limit` / `--offset-from-end`)
 - `info` — session detail + Active block
 - `status` — dual-signal liveness + session path
+- `resolve` — resolve Grok session id (ancestor walk or `--tab` / `--tab-index`)
 
 ## Retrieve topics
 

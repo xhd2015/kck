@@ -10,6 +10,7 @@ list
 messages
 open
 overview
+resolve
 send
 snapshot
 status
@@ -40,6 +41,7 @@ list
 messages
 open
 overview
+resolve
 send
 snapshot
 status

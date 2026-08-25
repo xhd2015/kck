@@ -80,6 +80,8 @@ type Options struct {
 	GrokListLiveOpts *sessions.ListLiveOpts
 	// GrokLiveOpts injects Status/Info live PID probes for L2. nil → production.
 	GrokLiveOpts *sessions.LiveOptions
+	// GrokResolveOpts injects resolve ancestor/tab probes for L2. nil → production.
+	GrokResolveOpts *sessions.ResolveOpts
 	// GrokNow for info relative timestamps. Zero → time.Now().
 	GrokNow time.Time
 
@@ -100,6 +102,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck grok messages <session-id> [OPTIONS]
        kck grok info <session-id> [OPTIONS]
        kck grok status <session-id> [OPTIONS]
+       kck grok resolve [OPTIONS]
        kck skill --show|--list|--install …
 
 Default mode: list live iTerm agent panes (streams rows as windows are scanned).
@@ -113,6 +116,7 @@ Commands:
   grok messages …          print recent chat messages (--limit / --offset-from-end)
   grok info …              show session detail + Active block
   grok status …            dual-signal liveness + session path
+  grok resolve …           resolve Grok session id (ancestor walk or --tab)
   skill                    show/install embedded skill docs
 
 Options:

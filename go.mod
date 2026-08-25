@@ -3,13 +3,14 @@ module kck
 go 1.25.10
 
 require (
-	github.com/xhd2015/agent-pro v0.0.158
-	github.com/xhd2015/dot-pkgs/go-pkgs v0.0.146
+	github.com/xhd2015/agent-pro v0.0.161
+	github.com/xhd2015/dot-pkgs/go-pkgs v0.0.147
 	github.com/xhd2015/less-flags v1.0.5
 	github.com/xhd2015/skills v0.0.28
 )
 
 require (
+	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect

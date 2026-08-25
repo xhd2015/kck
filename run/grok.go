@@ -23,6 +23,7 @@ Commands:
   messages …   print recent chat messages (--limit / --offset-from-end)
   info …       show session detail + Active block
   status …     dual-signal liveness + session path
+  resolve …    resolve Grok session id (ancestor walk or --tab)
 
 Run 'kck grok <command> --help' for command-specific options.
 `
@@ -171,6 +172,26 @@ Options:
   -h,--help     show help
 `
 
+const grokResolveHelp = `Usage: kck grok resolve [OPTIONS]
+
+Resolve a Grok session id either by walking ancestors to the nearest
+grok runner (default), or from a sibling iTerm2 tab in this window.
+
+Options:
+  --pid PID         start pid for ancestor walk (default: current process)
+  --tab SEL         1-based tab index, or next|left|right (right ≡ next)
+  --tab-index N     0-based tab index in this iTerm window
+  --dry-run         print resolution plan ([dry-run] lines); same discovery path
+  -v,--verbose      print detail fields on stderr (ancestor or tab)
+  --json            print session id + detail fields as JSON
+  -h,--help         show help
+
+Exactly one session source: ancestor walk (default / --pid), or --tab, or
+--tab-index. --pid cannot combine with --tab/--tab-index.
+Relative next/left/right do not wrap; edges error.
+Tab discovery matches: kool iterm2 window status.
+`
+
 func runGrok(opts Options) error {
 	stdout := opts.Stdout
 	if stdout == nil {
@@ -206,6 +227,8 @@ func runGrok(opts Options) error {
 		return runGrokInfo(opts, args[1:])
 	case "status":
 		return runGrokStatus(opts, args[1:])
+	case "resolve":
+		return runGrokResolve(opts, args[1:])
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown grok command: %s", args[0]))
 	}
@@ -500,6 +523,46 @@ func runGrokStatus(opts Options, args []string) error {
 		return nil
 	}
 	fmt.Fprintln(stdout, sessions.FormatStatusText(st))
+	return nil
+}
+
+func runGrokResolve(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	if argsHaveHelp(args) {
+		txt := strings.TrimPrefix(grokResolveHelp, "\n")
+		if !strings.HasSuffix(txt, "\n") {
+			txt += "\n"
+		}
+		fmt.Fprint(stdout, txt)
+		return nil
+	}
+
+	var resolveOpts *sessions.ResolveOpts
+	if opts.GrokResolveOpts != nil {
+		cp := *opts.GrokResolveOpts
+		resolveOpts = &cp
+	} else {
+		resolveOpts = &sessions.ResolveOpts{}
+	}
+	resolveOpts.Stdout = stdout
+	resolveOpts.Stderr = stderr
+	if strings.TrimSpace(resolveOpts.GrokHome) == "" {
+		resolveOpts.GrokHome = resolveGrokHome(opts)
+	}
+
+	err := sessions.RunResolve(args, resolveOpts)
+	if err != nil {
+		msg := strings.ReplaceAll(err.Error(), "agent-pro grok session resolve", "kck grok resolve")
+		return writeError(stderr, msg)
+	}
 	return nil
 }
 
