@@ -9,7 +9,7 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	assertNoHarnessErr(t, err)
 	assertSuccess(t, resp)
 	out := resp.Stdout
-	assertContains(t, out, "showing 2 of 3", "stdout")
+	assertContains(t, out, "showing last 2 of 3", "stdout")
 	assertContains(t, out, "hit-1", "stdout")
 	assertContains(t, out, "hit-2", "stdout")
 	if strings.Contains(out, "hit-0") {

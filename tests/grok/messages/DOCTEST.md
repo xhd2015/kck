@@ -23,14 +23,15 @@ L2 only — injectable `GrokHome` (+ optional `GrokMessagesOpts` for tab resolve
 - Default `--limit` 32; `--offset-from-end` skips newest before limit.
 - `--grep` (repeatable, AND) filters message bodies before paging; no hits →
   `(no matching messages)`.
-- Text: msgfmt `Chat history (showing K of N):` + `[kind] : body` (streamed).
+- Text: header offset 0 full → `showing all K of N`; offset 0 partial →
+  `showing last K of N`; offset > 0 → `showing lo-hi(K) of N` + `[kind] : body`.
 - `--color` / `--no-color` / auto; match spans bold-red when grepping.
 - `--json`: `{session_id,total,offset_from_end,limit,messages[]}` (no ANSI;
   `total` is post-grep).
 
 ## Version
 
-0.0.2
+0.0.4
 
 ## Decision Tree
 
@@ -74,8 +75,8 @@ grok/messages/
 | `missing-session-source/` | `Error:` usage. |
 | `unknown-session/` | `Error: grok session not found`. |
 | `empty/` | `(no messages)`. |
-| `limit-keeps-latest/` | `--limit 2` keeps newest pair; header `showing 2 of N`. |
-| `offset-pages/` | `--offset-from-end 2 --limit 2` is the prior page. |
+| `limit-keeps-latest/` | `--limit 2` keeps newest pair; header `showing last 2 of N`. |
+| `offset-pages/` | `--offset-from-end 2 --limit 2` prior page; header `lo-hi(2) of N`. |
 | `offset-past-end/` | offset ≥ total → `(no messages)`. |
 | `kinds-order/` | user / thinking / tool / assistant labels in order. |
 | `timestamp-prefix/` | local `[YYYY-MM-DD HH:MM:SS]` from wire times. |

@@ -22,6 +22,9 @@ kck grok messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
   case-insensitive literal), then page.
 - Paging: skip `--offset-from-end` newest matches, then take last `--limit`
   (default 32).
+- Text header: offset 0 full → `showing all K of N`; offset 0 partial →
+  `showing last K of N`; offset > 0 → `showing lo-hi(K) of N` (1-based
+  oldest→newest indices).
 - Streams message lines as they are formatted; `--json` is one document.
 
 ## Useful flags

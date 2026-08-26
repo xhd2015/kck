@@ -9,7 +9,8 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 	assertNoHarnessErr(t, err)
 	assertSuccess(t, resp)
 	out := resp.Stdout
-	assertContains(t, out, "Chat history (showing 2 of", "stdout")
+	// total=8, offset=2, shown=2 → hi=6, lo=5
+	assertContains(t, out, "Chat history (showing 5-6(2) of 8):", "stdout")
 	assertContains(t, out, "[tool] : run_terminal_command: echo hi", "stdout")
 	assertContains(t, out, "[assistant] : a1", "stdout")
 	if strings.Contains(out, "u2") || strings.Contains(out, "a2") {
