@@ -113,7 +113,7 @@ Commands:
   grok open …              focus hosting tab or resume (--tab / --tab-index / <id>)
   grok snapshot …          capture visible pane text (--tab / --tab-index / <id>)
   grok send …              type text into hosting pane (--session-id / --tab / --open)
-  grok messages …          print recent chat messages (--limit / --offset-from-end)
+  grok messages …          print recent chat messages (--limit / --grep / --offset-from-end)
   grok info …              show session detail + Active block
   grok status …            dual-signal liveness + session path
   grok resolve …           resolve Grok session id (ancestor walk or --tab)

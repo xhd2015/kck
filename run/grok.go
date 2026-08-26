@@ -20,7 +20,7 @@ Commands:
   open …       focus hosting iTerm tab, or resume (--tab / --tab-index / <id>)
   snapshot …   capture visible pane text (--tab / --tab-index / <id>)
   send …       type text into hosting pane (--session-id / --tab / --open)
-  messages …   print recent chat messages (--limit / --offset-from-end)
+  messages …   print recent chat messages (--limit / --grep / --offset-from-end)
   info …       show session detail + Active block
   status …     dual-signal liveness + session path
   resolve …    resolve Grok session id (ancestor walk or --tab)
@@ -44,6 +44,10 @@ Options:
   --limit N             page size (default 32; 0 = all remaining after offset)
   --offset-from-end N   skip N newest messages before applying --limit (default 0)
                         example: --offset-from-end 32  # skip last 32; start next page
+  --grep P              keep messages whose body contains P (repeatable; AND;
+                        case-insensitive literal). Applied before offset/limit.
+  --color               force ANSI color on (even when stdout is not a TTY)
+  --no-color            force ANSI color off
   --json                machine-readable (includes total, offset, limit; no ANSI)
   -h,--help             show help
 `

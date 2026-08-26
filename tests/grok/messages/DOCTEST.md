@@ -17,16 +17,20 @@ L2 only — injectable `GrokHome` (+ optional `GrokMessagesOpts` for tab resolve
 ## Behaviors
 
 - Root / grok / messages help document `messages`, `--limit`, `--offset-from-end`
-  (including the `32` next-page example).
+  (including the `32` next-page example), `--grep`, `--color`, `--no-color`.
 - Missing session source / unknown session → `Error:`.
 - Empty / missing updates → `(no messages)`.
 - Default `--limit` 32; `--offset-from-end` skips newest before limit.
-- Text: msgfmt `Chat history (showing K of N):` + `[kind] : body`.
-- `--json`: `{session_id,total,offset_from_end,limit,messages[]}`.
+- `--grep` (repeatable, AND) filters message bodies before paging; no hits →
+  `(no matching messages)`.
+- Text: msgfmt `Chat history (showing K of N):` + `[kind] : body` (streamed).
+- `--color` / `--no-color` / auto; match spans bold-red when grepping.
+- `--json`: `{session_id,total,offset_from_end,limit,messages[]}` (no ANSI;
+  `total` is post-grep).
 
 ## Version
 
-0.0.1
+0.0.2
 
 ## Decision Tree
 
@@ -44,7 +48,20 @@ grok/messages/
 ├── offset-past-end/
 ├── kinds-order/
 ├── timestamp-prefix/
-└── json/
+├── json/
+└── grep/
+    ├── filter/
+    │   ├── single/
+    │   ├── and/
+    │   ├── no-match/
+    │   └── with-limit/
+    ├── errors/
+    │   ├── empty-pattern/
+    │   └── color-conflict/
+    ├── color/
+    │   ├── force-on/
+    │   └── no-color/
+    └── json/
 ```
 
 ## Test Index
@@ -53,7 +70,7 @@ grok/messages/
 |---|---|
 | `help/root-lists-messages/` | `kck -h` mentions `grok messages`. |
 | `help/grok-usage/` | `kck grok --help` lists `messages`. |
-| `help/messages-usage/` | documents `--limit`, `--offset-from-end 32` example, caps, timestamps. |
+| `help/messages-usage/` | documents `--limit`, `--offset-from-end 32`, `--grep`, color flags, caps. |
 | `missing-session-source/` | `Error:` usage. |
 | `unknown-session/` | `Error: grok session not found`. |
 | `empty/` | `(no messages)`. |
@@ -63,6 +80,15 @@ grok/messages/
 | `kinds-order/` | user / thinking / tool / assistant labels in order. |
 | `timestamp-prefix/` | local `[YYYY-MM-DD HH:MM:SS]` from wire times. |
 | `json/` | valid JSON; fields total/offset/limit/messages (+ timestamp). |
+| `grep/filter/single/` | one `--grep` keeps matching bodies only. |
+| `grep/filter/and/` | two `--grep`s require both substrings in the same message. |
+| `grep/filter/no-match/` | `(no matching messages)`. |
+| `grep/filter/with-limit/` | `--limit` applies after grep (newest matches). |
+| `grep/errors/empty-pattern/` | empty `--grep` → `Error:`. |
+| `grep/errors/color-conflict/` | `--color` + `--no-color` → `Error:`. |
+| `grep/color/force-on/` | `--color` highlights match spans (ANSI). |
+| `grep/color/no-color/` | `--no-color` emits no ANSI. |
+| `grep/json/` | filtered JSON; no ANSI; `total` = match count. |
 
 ## How to Run
 

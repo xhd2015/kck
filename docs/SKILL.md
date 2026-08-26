@@ -41,7 +41,7 @@ for when/why and agent workflows, not a full flag encyclopedia.
 - `open` — focus hosting tab or resume; `--tab` / `--tab-index`
 - `snapshot` — capture visible pane text (agent-run TTY when managed, else iTerm)
 - `send` — type into hosting pane; agent-run-managed `--session-id` sends via agent-run (no iTerm); `--no-agent-run` forces iTerm; `--open` resume-then-send for unmanaged
-- `messages` — recent coalesced chat (msgfmt-style; `--limit` / `--offset-from-end`)
+- `messages` — recent coalesced chat (msgfmt-style; `--limit` / `--grep` / `--offset-from-end`)
 - `info` — session detail + Active block
 - `status` — dual-signal liveness + session path
 - `resolve` — resolve Grok session id (ancestor walk or `--tab` / `--tab-index`)
