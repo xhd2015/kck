@@ -3,8 +3,8 @@ module kck
 go 1.25.10
 
 require (
-	github.com/xhd2015/agent-pro v0.0.176
-	github.com/xhd2015/dot-pkgs/go-pkgs v0.0.148
+	github.com/xhd2015/agent-pro v0.0.177
+	github.com/xhd2015/dot-pkgs/go-pkgs v0.0.151
 	github.com/xhd2015/less-flags v1.0.5
 	github.com/xhd2015/skills v0.0.30
 )
