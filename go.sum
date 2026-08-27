@@ -10,8 +10,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02 h1:AgcIVYPa6XJnU3phs104wLj8l5GEththEw6+F79YsIY=
 github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02/go.mod h1:Q48J4R4DvxnHolD5P8pOtXigYlRuPLGl6moFx3ulM68=
-github.com/xhd2015/agent-pro v0.0.174 h1:guHGCeqpKIN0TjpfRWsQE0UWGtjhZehf8TzOd00OSt0=
-github.com/xhd2015/agent-pro v0.0.174/go.mod h1:UhL0iE613xZM6CqscVCxD+DlNG5WjWvf1xhdiX0AbBc=
+github.com/xhd2015/agent-pro v0.0.176 h1:FjdnTEqlUVgf59SidGDY6UP6vbOLJkyEckDoA4MqKD8=
+github.com/xhd2015/agent-pro v0.0.176/go.mod h1:UhL0iE613xZM6CqscVCxD+DlNG5WjWvf1xhdiX0AbBc=
 github.com/xhd2015/dot-pkgs/go-pkgs v0.0.148 h1:EeriCRJ6gjhl7xErOYRkGOFH0TxdbE3ZiQ4VWkyEqZk=
 github.com/xhd2015/dot-pkgs/go-pkgs v0.0.148/go.mod h1:fRqLdDC4F2wHHej+4qiLbfItwpqobArDUxlHb2zP3tg=
 github.com/xhd2015/less-flags v1.0.5 h1:PZH0v8wZVdscDcSxLyRFEtybN/Xz341bWQ4JRCQqAQ0=

@@ -194,6 +194,8 @@ Exactly one session source: ancestor walk (default / --pid), or --tab, or
 --tab-index. --pid cannot combine with --tab/--tab-index.
 Relative next/left/right do not wrap; edges error.
 Tab discovery matches: kool iterm2 window status.
+When a parent and its child subagent share a tab, the parent id is returned;
+unrelated multiple grok sessions on the same tab still refuse.
 `
 
 func runGrok(opts Options) error {

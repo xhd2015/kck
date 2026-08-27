@@ -15,7 +15,9 @@ kck grok resolve [OPTIONS]
 - Default: walk ancestors from the current process (or `--pid`) to the nearest
   grok runner; session id comes from open-file paths only (never cmdline flags).
 - `--tab SEL` / `--tab-index N`: resolve from a sibling iTerm2 tab in this window
-  (1-based / `next|left|right`, or 0-based index). No wrap at edges.
+  (1-based / `next|left|right`, or 0-based index). No wrap at edges. When a
+  parent session and its child subagent share the tab, the parent id wins;
+  unrelated multi-session tabs still refuse.
 - Default success stdout: bare `<session-id>` (script-friendly).
 - `--dry-run`: same discovery; `[dry-run]` plan lines instead of bare id.
 - `-v`: bare id on stdout; detail fields on stderr.
