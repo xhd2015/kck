@@ -9,11 +9,14 @@ description: >-
 
 ```text
 kck grok messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
+kck codex messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
 ```
 
 ## Behavior
 
-- Reads `updates.jsonl` from disk (no live pane required for an explicit id).
+- Grok: reads `updates.jsonl` from disk (no live pane required for an explicit id).
+- Codex: reads the session rollout JSONL under `~/.codex/sessions/…` (skips
+  AGENTS/skills preambles).
 - Coalesces chunks into user / thinking / tool / response messages.
 - Per-kind rune caps with U+2026 ellipsis: user 4096, tool 128, thinking 512,
   response 8192.

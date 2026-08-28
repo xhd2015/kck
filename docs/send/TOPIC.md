@@ -1,16 +1,18 @@
 ---
 name: kck/send
 description: >-
-  Type text and/or keys into the live iTerm pane hosting a Grok session; optional --open.
+  Type text and/or keys into the live iTerm pane hosting a Grok or Codex session; optional --open.
 ---
 
 # send
 
 ```text
 kck grok send [text] (--session-id <id> | --tab SEL | --tab-index N) [OPTIONS]
+kck codex send [text] (--session-id <id> | --tab SEL | --tab-index N) [OPTIONS]
 ```
 
 Same write path as `kool iterm2 session <uuid> send …` (`iterm2.SendText`).
+`--cron` is peeled in kck for both Grok and Codex (agent-pro send unchanged).
 
 ## Session source (exactly one)
 

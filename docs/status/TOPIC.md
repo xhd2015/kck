@@ -8,12 +8,14 @@ description: >-
 
 ```text
 kck grok status <session-id> [OPTIONS]
+kck codex status <session-id> [OPTIONS]
 ```
 
 ## Behavior
 
-- Reports liveness from dual signals (e.g. process + host/tab presence).
-- Includes the session path for quick navigation.
+- Grok: dual signals — `active_sessions.json` (File) + live PIDs.
+- Codex: PID-only (File always no; no Codex active-session registry). Includes
+  the rollout path for quick navigation.
 - Unknown session → hard `Error:`.
 
 ## Agent tips

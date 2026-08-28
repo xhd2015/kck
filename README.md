@@ -1,6 +1,6 @@
 # kck
 
-List live iTerm agent panes and operate Grok sessions (open, snapshot, send, messages, info, status, resolve). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
+List live iTerm agent panes and operate Grok/Codex sessions (open, snapshot, send, messages, info, status, resolve). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
 
 ## Requirements
 
@@ -35,13 +35,23 @@ kck grok info <session-id>
 kck grok status <session-id>
 kck grok send "hello" --session-id <session-id>
 
+# Codex: list / open / send / messages / info / status / resolve / snapshot
+kck codex list
+kck codex open --tab 1
+kck codex send "hello" --session-id <id>
+kck codex messages <id>
+kck codex info <id>
+kck codex status <id>
+kck codex resolve --tab 1
+kck codex snapshot --tab 1
+
 # embedded skill (when/why + topics)
 kck skill --list
 kck skill --show
 kck skill --show send
 ```
 
-Domain flags: `kck --help` and `kck grok <command> --help`.
+Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command> --help`.
 
 ## Commands
 
@@ -55,6 +65,13 @@ Domain flags: `kck --help` and `kck grok <command> --help`.
 | `kck grok messages` | Recent coalesced chat |
 | `kck grok info` / `status` | Detail + Active; dual-signal liveness |
 | `kck grok resolve` | Resolve id (ancestor walk or `--tab`) |
+| `kck codex list` | Codex ids in iTerm tabs |
+| `kck codex open` | Focus hosting tab or resume |
+| `kck codex snapshot` | Capture visible Codex pane text |
+| `kck codex send` | Type into hosting pane (agent-run when managed) |
+| `kck codex messages` | Recent coalesced chat |
+| `kck codex info` / `status` | Detail + Active; PID liveness (File always no) |
+| `kck codex resolve` | Resolve Codex id (ancestor walk or `--tab`) |
 | `kck skill` | Show/install embedded skill docs |
 
 ## Docs

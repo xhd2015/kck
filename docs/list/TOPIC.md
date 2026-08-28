@@ -44,9 +44,18 @@ One row per sid; multi-tab shows `w=… t=…(+N)`. Omits live PIDs with no tab.
 Prefer this when you need Grok ids for `send` / `snapshot` / `open`.
 Same core as `agent-pro grok session list-live`.
 
+## `kck codex list` (Codex ids in iTerm)
+
+```text
+kck codex list [--json] [--limit N]
+```
+
+Same shape as `kck grok list`, for Codex runners (`codex` / `codex-tty`) via
+rollout hard-hits. Same core as `agent-pro codex session list-live`.
+
 ## Agent tips
 
 1. Prefer `--json` when parsing programmatically.
 2. Use `--needs-confirm` to find panes waiting on the user.
 3. Use `--sendable` before a send workflow to confirm idle hosts.
-4. Use `kck grok list` (not bare `kck`) when you only want Grok session ids.
+4. Use `kck grok list` / `kck codex list` (not bare `kck`) when you only want runner ids.

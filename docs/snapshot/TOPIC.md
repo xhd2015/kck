@@ -1,7 +1,7 @@
 ---
 name: kck/snapshot
 description: >-
-  Capture currently visible pane text for a live Grok session host
+  Capture currently visible pane text for a live Grok or Codex session host
   (agent-run TTY when managed, else iTerm Contents).
 ---
 
@@ -9,15 +9,17 @@ description: >-
 
 ```text
 kck grok snapshot (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
+kck codex snapshot (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
 ```
 
 ## Behavior
 
 - Prints visible pane text to stdout (or `-o FILE`).
 - Does **not** focus the pane.
-- When the Grok id is bound to a **live agent-run** grok-tty session, prefers
-  that sanitized TTY snapshot (single frame). Otherwise uses iTerm2 Contents.
-- Bare grok (not under agent-run) always uses iTerm. No live host and no
+- When the runner id is bound to a **live agent-run** tty session (`grok-tty` /
+  `codex-tty`), prefers that sanitized TTY snapshot (single frame). Otherwise
+  uses iTerm2 Contents.
+- Bare runner (not under agent-run) always uses iTerm. No live host and no
   agent-run hit → hard error (no resume).
 
 ## Useful flags

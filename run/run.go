@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	codexsessions "github.com/xhd2015/agent-pro/agent/codex/sessions"
 	"github.com/xhd2015/agent-pro/agent/grok/sessions"
 	"github.com/xhd2015/agent-pro/pkgs/itermsnapshot"
 	lessflags "github.com/xhd2015/less-flags"
@@ -92,6 +93,25 @@ type Options struct {
 	GrokCronSleep func(time.Duration) error
 	// GrokCronLoc is the location for easy-cron TOD math. nil → time.Local.
 	GrokCronLoc *time.Location
+
+	// CodexHome for `kck codex …`. Empty → agenttty.CodexHome().
+	CodexHome string
+	// CodexListLiveOpts injects list-live probes for L2. nil → production.
+	CodexListLiveOpts *codexsessions.ListLiveOpts
+	// CodexOpenOpts injects open probes/launchers for L2. nil → production.
+	CodexOpenOpts *codexsessions.OpenOpts
+	// CodexSnapshotOpts injects snapshot probes/Contents for L2. nil → production.
+	CodexSnapshotOpts *codexsessions.SnapshotOpts
+	// CodexSendOpts injects send probes/SendText for L2. nil → production.
+	CodexSendOpts *codexsessions.SendOpts
+	// CodexResolveOpts injects resolve ancestor/tab probes for L2. nil → production.
+	CodexResolveOpts *codexsessions.ResolveOpts
+	// CodexLiveOpts injects Status/Info live PID probes for L2. nil → production.
+	CodexLiveOpts *codexsessions.LiveOptions
+	// CodexMessagesOpts injects messages tab-resolve probes for L2. nil → production.
+	CodexMessagesOpts *codexsessions.MessagesOpts
+	// CodexNow for info relative timestamps. Zero → time.Now().
+	CodexNow time.Time
 }
 
 const helpText = `Usage: kck [OPTIONS]
@@ -103,6 +123,14 @@ const helpText = `Usage: kck [OPTIONS]
        kck grok info <session-id> [OPTIONS]
        kck grok status <session-id> [OPTIONS]
        kck grok resolve [OPTIONS]
+       kck codex list [OPTIONS]
+       kck codex open <session-id> [OPTIONS]
+       kck codex snapshot <session-id> [OPTIONS]
+       kck codex send <text> --session-id <id> [OPTIONS]
+       kck codex messages <session-id> [OPTIONS]
+       kck codex info <session-id> [OPTIONS]
+       kck codex status <session-id> [OPTIONS]
+       kck codex resolve [OPTIONS]
        kck skill --show|--list|--install …
 
 Default mode: list live iTerm agent panes (streams rows as windows are scanned).
@@ -117,6 +145,14 @@ Commands:
   grok info …              show session detail + Active block
   grok status …            dual-signal liveness + session path
   grok resolve …           resolve Grok session id (ancestor walk or --tab)
+  codex list …             list Codex ids hosted in iTerm tabs
+  codex open …             focus hosting tab or resume (--tab / --tab-index / <id>)
+  codex snapshot …         capture visible pane text (--tab / --tab-index / <id>)
+  codex send …             type text into hosting pane (--session-id / --tab / --open)
+  codex messages …         recent coalesced chat
+  codex info …             detail + Active; PID liveness
+  codex status …           PID liveness + rollout path
+  codex resolve …          resolve Codex session id (ancestor walk or --tab)
   skill                    show/install embedded skill docs
 
 Options:
@@ -164,6 +200,8 @@ func MainWith(opts Options) error {
 		switch opts.Args[0] {
 		case "grok":
 			return runGrok(opts)
+		case "codex":
+			return runCodex(opts)
 		case "skill":
 			return runSkill(opts)
 		}

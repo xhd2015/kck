@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xhd2015/agent-pro/agent/grok/sessions"
+	codexsessions "github.com/xhd2015/agent-pro/agent/codex/sessions"
+	groksessions "github.com/xhd2015/agent-pro/agent/grok/sessions"
 	"github.com/xhd2015/agent-pro/pkgs/agenttty"
 	"github.com/xhd2015/dot-pkgs/go-pkgs/cron/easycron"
 )
@@ -83,10 +84,43 @@ func rewriteSendErr(err error) string {
 	if err == nil {
 		return ""
 	}
-	return strings.ReplaceAll(err.Error(), "agent-pro grok session send", "kck grok send")
+	msg := err.Error()
+	msg = strings.ReplaceAll(msg, "agent-pro grok session send", "kck grok send")
+	msg = strings.ReplaceAll(msg, "agent-pro codex session send", "kck codex send")
+	msg = strings.ReplaceAll(msg, "agent-pro grok session focus", "kck grok send")
+	msg = strings.ReplaceAll(msg, "agent-pro codex session focus", "kck codex send")
+	return msg
+}
+
+type cronRunner string
+
+const (
+	cronRunnerGrok  cronRunner = "grok"
+	cronRunnerCodex cronRunner = "codex"
+)
+
+func cronRunSend(opts Options, runner cronRunner, sendArgs []string, stdout, stderr io.Writer) error {
+	switch runner {
+	case cronRunnerCodex:
+		return codexsessions.RunSend(sendArgs, stdout, stderr, resolveCodexHome(opts), opts.CodexSendOpts)
+	default:
+		home := strings.TrimSpace(opts.GrokHome)
+		if home == "" {
+			home = agenttty.GrokHome()
+		}
+		return groksessions.RunSend(sendArgs, stdout, stderr, home, opts.GrokSendOpts)
+	}
 }
 
 func runCronDryPreview(opts Options, expr easycron.Expr, raw string, sendArgs []string) error {
+	return runCronDryPreviewFor(opts, cronRunnerGrok, expr, raw, sendArgs)
+}
+
+func runCronSendLoop(opts Options, expr easycron.Expr, raw string, sendArgs []string) error {
+	return runCronSendLoopFor(opts, cronRunnerGrok, expr, raw, sendArgs)
+}
+
+func runCronDryPreviewFor(opts Options, runner cronRunner, expr easycron.Expr, raw string, sendArgs []string) error {
 	stdout := opts.Stdout
 	if stdout == nil {
 		stdout = io.Discard
@@ -94,10 +128,6 @@ func runCronDryPreview(opts Options, expr easycron.Expr, raw string, sendArgs []
 	stderr := opts.Stderr
 	if stderr == nil {
 		stderr = io.Discard
-	}
-	grokHome := strings.TrimSpace(opts.GrokHome)
-	if grokHome == "" {
-		grokHome = agenttty.GrokHome()
 	}
 
 	nowFn := cronNow(opts)
@@ -115,14 +145,14 @@ func runCronDryPreview(opts Options, expr easycron.Expr, raw string, sendArgs []
 		from = next.Add(time.Nanosecond)
 	}
 
-	err := sessions.RunSend(sendArgs, stdout, stderr, grokHome, opts.GrokSendOpts)
+	err := cronRunSend(opts, runner, sendArgs, stdout, stderr)
 	if err != nil {
 		return writeError(stderr, rewriteSendErr(err))
 	}
 	return nil
 }
 
-func runCronSendLoop(opts Options, expr easycron.Expr, raw string, sendArgs []string) error {
+func runCronSendLoopFor(opts Options, runner cronRunner, expr easycron.Expr, raw string, sendArgs []string) error {
 	stdout := opts.Stdout
 	if stdout == nil {
 		stdout = io.Discard
@@ -130,10 +160,6 @@ func runCronSendLoop(opts Options, expr easycron.Expr, raw string, sendArgs []st
 	stderr := opts.Stderr
 	if stderr == nil {
 		stderr = io.Discard
-	}
-	grokHome := strings.TrimSpace(opts.GrokHome)
-	if grokHome == "" {
-		grokHome = agenttty.GrokHome()
 	}
 
 	nowFn := cronNow(opts)
@@ -156,7 +182,7 @@ func runCronSendLoop(opts Options, expr easycron.Expr, raw string, sendArgs []st
 			}
 		}
 
-		err := sessions.RunSend(sendArgs, stdout, stderr, grokHome, opts.GrokSendOpts)
+		err := cronRunSend(opts, runner, sendArgs, stdout, stderr)
 		tick++
 		if err != nil {
 			msg := rewriteSendErr(err)

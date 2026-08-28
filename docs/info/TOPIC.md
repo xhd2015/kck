@@ -8,6 +8,7 @@ description: >-
 
 ```text
 kck grok info <session-id> [OPTIONS]
+kck codex info <session-id> [OPTIONS]
 ```
 
 ## Behavior
@@ -15,6 +16,8 @@ kck grok info <session-id> [OPTIONS]
 - Prints human-readable session metadata (paths, timestamps, workspace).
 - Includes an **Active** block summarizing whether a live host/process is
   attached.
+- Codex: Active **File** is always no (no `active_sessions.json`); PIDs use
+  open-file hard hits on codex runners.
 - Unknown session → hard `Error:`.
 
 ## Agent tips
