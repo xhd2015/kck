@@ -24,9 +24,11 @@ var SkillMD string
 //go:embed overview
 //go:embed list
 //go:embed open
+//go:embed focus
 //go:embed snapshot
 //go:embed send
 //go:embed messages
+//go:embed prompts
 //go:embed info
 //go:embed status
 //go:embed resolve

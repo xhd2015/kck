@@ -1,6 +1,6 @@
 # kck
 
-List live iTerm agent panes and operate Grok/Codex sessions (open, snapshot, send, messages, info, status, resolve, pickup). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
+List live iTerm agent panes and operate Grok/Codex sessions (open, focus, snapshot, send, messages, prompts, info, status, resolve, pickup). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
 
 ## Requirements
 
@@ -63,17 +63,21 @@ Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command
 | `kck` / `kck --home PATH` | Live iTerm panes, or agent-run store under `PATH/sessions` |
 | `kck grok list` | Grok ids in iTerm tabs |
 | `kck grok open` | Focus hosting tab or resume |
+| `kck grok focus` | Focus live hosting tab only (no resume) |
 | `kck grok snapshot` | Capture visible pane text |
 | `kck grok send` | Type into hosting pane (agent-run when managed) |
 | `kck grok messages` | Recent coalesced chat |
+| `kck grok prompts` | User prompts (`--first` / `--main` / `--grep` / `--this-window`) |
 | `kck grok info` / `status` | Detail + Active; dual-signal liveness |
 | `kck grok resolve` | Resolve id (ancestor walk or `--tab`) |
 | `kck grok pickup` | New empty session staged from a base session (kck-pickup-a-session) |
 | `kck codex list` | Codex ids in iTerm tabs |
 | `kck codex open` | Focus hosting tab or resume |
+| `kck codex focus` | Focus live hosting tab only (no resume) |
 | `kck codex snapshot` | Capture visible Codex pane text |
 | `kck codex send` | Type into hosting pane (agent-run when managed) |
 | `kck codex messages` | Recent coalesced chat |
+| `kck codex prompts` | User prompts (`--first` / `--grep` / `--this-window`) |
 | `kck codex info` / `status` | Detail + Active; PID liveness (File always no) |
 | `kck codex resolve` | Resolve Codex id (ancestor walk or `--tab`) |
 | `kck codex pickup` | New empty session staged from a base session (kck-pickup-a-session) |

@@ -71,12 +71,16 @@ type Options struct {
 	GrokHome string
 	// GrokOpenOpts injects open probes/launchers for L2. nil → production.
 	GrokOpenOpts *sessions.OpenOpts
+	// GrokFocusOpts injects focus probes for L2. nil → production.
+	GrokFocusOpts *sessions.FocusOpts
 	// GrokSnapshotOpts injects snapshot probes/Contents for L2. nil → production.
 	GrokSnapshotOpts *sessions.SnapshotOpts
 	// GrokSendOpts injects send probes/SendText/open for L2. nil → production.
 	GrokSendOpts *sessions.SendOpts
 	// GrokMessagesOpts injects messages tab-resolve probes for L2. nil → production.
 	GrokMessagesOpts *sessions.MessagesOpts
+	// GrokPromptsOpts injects prompts host/tab probes for L2. nil → production.
+	GrokPromptsOpts *sessions.PromptsOpts
 	// GrokListLiveOpts injects list-live probes for L2. nil → production.
 	GrokListLiveOpts *sessions.ListLiveOpts
 	// GrokLiveOpts injects Status/Info live PID probes for L2. nil → production.
@@ -102,6 +106,8 @@ type Options struct {
 	CodexListLiveOpts *codexsessions.ListLiveOpts
 	// CodexOpenOpts injects open probes/launchers for L2. nil → production.
 	CodexOpenOpts *codexsessions.OpenOpts
+	// CodexFocusOpts injects focus probes for L2. nil → production.
+	CodexFocusOpts *codexsessions.FocusOpts
 	// CodexSnapshotOpts injects snapshot probes/Contents for L2. nil → production.
 	CodexSnapshotOpts *codexsessions.SnapshotOpts
 	// CodexSendOpts injects send probes/SendText for L2. nil → production.
@@ -112,6 +118,8 @@ type Options struct {
 	CodexLiveOpts *codexsessions.LiveOptions
 	// CodexMessagesOpts injects messages tab-resolve probes for L2. nil → production.
 	CodexMessagesOpts *codexsessions.MessagesOpts
+	// CodexPromptsOpts injects prompts host/tab probes for L2. nil → production.
+	CodexPromptsOpts *codexsessions.PromptsOpts
 	// CodexPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
 	CodexPickupOpts *PickupOpts
 	// CodexNow for info relative timestamps. Zero → time.Now().
@@ -121,18 +129,22 @@ type Options struct {
 const helpText = `Usage: kck [OPTIONS]
        kck grok list [OPTIONS]
        kck grok open <session-id> [OPTIONS]
+       kck grok focus <session-id> [OPTIONS]
        kck grok snapshot <session-id> [OPTIONS]
        kck grok send <text> --session-id <id> [OPTIONS]
        kck grok messages <session-id> [OPTIONS]
+       kck grok prompts [OPTIONS]
        kck grok info <session-id> [OPTIONS]
        kck grok status <session-id> [OPTIONS]
        kck grok resolve [OPTIONS]
        kck grok pickup "msg..." --session-id <id> [OPTIONS]
        kck codex list [OPTIONS]
        kck codex open <session-id> [OPTIONS]
+       kck codex focus <session-id> [OPTIONS]
        kck codex snapshot <session-id> [OPTIONS]
        kck codex send <text> --session-id <id> [OPTIONS]
        kck codex messages <session-id> [OPTIONS]
+       kck codex prompts [OPTIONS]
        kck codex info <session-id> [OPTIONS]
        kck codex status <session-id> [OPTIONS]
        kck codex resolve [OPTIONS]
@@ -145,18 +157,22 @@ With --home: list agent-run store sessions under that home.
 Commands:
   grok list …              list Grok ids hosted in iTerm tabs
   grok open …              focus hosting tab or resume (--tab / --tab-index / <id>)
+  grok focus …             focus hosting tab only when live (no resume)
   grok snapshot …          capture visible pane text (--tab / --tab-index / <id>)
   grok send …              type text into hosting pane (--session-id / --tab / --open)
   grok messages …          print recent chat messages (--limit / --grep / --offset-from-end)
+  grok prompts …           list user prompts (--first / --main / --grep / --this-window / --tab)
   grok info …              show session detail + Active block
   grok status …            dual-signal liveness + session path
   grok resolve …           resolve Grok session id (ancestor walk or --tab)
   grok pickup …            new empty session staged from a base session (kck-pickup-a-session)
   codex list …             list Codex ids hosted in iTerm tabs
   codex open …             focus hosting tab or resume (--tab / --tab-index / <id>)
+  codex focus …            focus hosting tab only when live (no resume)
   codex snapshot …         capture visible pane text (--tab / --tab-index / <id>)
   codex send …             type text into hosting pane (--session-id / --tab / --open)
   codex messages …         recent coalesced chat
+  codex prompts …          list user prompts (--first / --grep / --this-window / --tab)
   codex info …             detail + Active; PID liveness
   codex status …           PID liveness + rollout path
   codex resolve …          resolve Codex session id (ancestor walk or --tab)

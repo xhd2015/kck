@@ -2,9 +2,9 @@
 name: kck
 description: >-
   kck lists live iTerm agent panes (or agent-run store sessions with --home)
-  and operates Grok/Codex sessions: open/focus, snapshot, send, messages, info,
-  status, resolve, pickup. Use when the user runs kck, asks about live agent tabs, or
-  /kck. Load topics: kck skill --show <topic>
+  and operates Grok/Codex sessions: open, focus, snapshot, send, messages,
+  prompts, info, status, resolve, pickup. Use when the user runs kck, asks about
+  live agent tabs, or /kck. Load topics: kck skill --show <topic>
 ---
 
 # kck — live agent panes and Grok / Codex session ops
@@ -17,11 +17,13 @@ This skill is an **index**. Load detailed guidance with
 - **Default (no `--home`)** — scan live iTerm windows for agent-like panes;
   stream rows as windows are scanned.
 - **`--home PATH`** — list agent-run store sessions under `PATH/sessions`.
-- **`kck grok …`** — list iTerm-hosted Grok ids, open/focus, snapshot, send,
-  messages, info, status, resolve, pickup (thin wrappers over agent-pro session helpers).
-- **`kck codex …`** — `list`, `open`, `snapshot`, `send`, `messages`, `info`,
-  `status`, `resolve`, `pickup` (same shapes as the Grok counterparts where applicable;
-  multi-hit on one tab still refuses; Codex status File is always no).
+- **`kck grok …`** — list iTerm-hosted Grok ids, open, focus, snapshot, send,
+  messages, prompts, info, status, resolve, pickup (thin wrappers over agent-pro
+  session helpers).
+- **`kck codex …`** — `list`, `open`, `focus`, `snapshot`, `send`, `messages`,
+  `prompts`, `info`, `status`, `resolve`, `pickup` (same shapes as the Grok
+  counterparts where applicable; multi-hit on one tab still refuses; Codex status
+  File is always no).
 
 Domain flags live in `kck --help`, `kck grok <cmd> --help`, and
 `kck codex <cmd> --help`. This skill is for when/why and agent workflows,
@@ -43,11 +45,14 @@ not a full flag encyclopedia.
 - `overview` — modes, columns (`AGENT_RUN` / `AGENT_SID`), soft-fail culture
 - `list` — live + store list; `kck grok list` / `kck codex list` for iTerm-hosted ids
 - `open` — focus hosting tab or resume; `--tab` / `--tab-index`; Codex: `kck codex open`
+- `focus` — focus live hosting tab only (no resume); Codex: `kck codex focus`
 - `snapshot` — capture visible pane text (agent-run TTY when managed, else iTerm);
   Codex: `kck codex snapshot`
 - `send` — type into hosting pane; agent-run-managed `--session-id` sends via agent-run (no iTerm); `--no-agent-run` forces iTerm; `--open` resume-then-send for unmanaged; `--cron` on Grok and Codex
 - `messages` — recent coalesced chat (msgfmt-style; `--limit` / `--grep` / `--offset-from-end`);
   Codex: `kck codex messages`
+- `prompts` — user prompts only (`--first` / `--grep` / `--this-window` / `--this-space` / `--tab`);
+  Codex: `kck codex prompts`
 - `info` — session detail + Active block; Codex: `kck codex info` (File always no)
 - `status` — liveness + session path; Codex: PID-only (`kck codex status`)
 - `resolve` — resolve session id (ancestor walk or `--tab` / `--tab-index`);

@@ -18,15 +18,61 @@ const grokHelp = `Usage: kck grok <command> [ARGS]
 Commands:
   list …       list Grok session ids hosted in iTerm tabs
   open …       focus hosting iTerm tab, or resume (--tab / --tab-index / <id>)
+  focus …      focus hosting iTerm tab only when live (no resume)
   snapshot …   capture visible pane text (--tab / --tab-index / <id>)
   send …       type text into hosting pane (--session-id / --tab / --open)
   messages …   print recent chat messages (--limit / --grep / --offset-from-end)
+  prompts …    list user prompts (--first / --main / --grep / --this-window / --tab)
   info …       show session detail + Active block
   status …     dual-signal liveness + session path
   resolve …    resolve Grok session id (ancestor walk or --tab)
   pickup …     new empty session staged from a base session (kck-pickup-a-session)
 
 Run 'kck grok <command> --help' for command-specific options.
+`
+
+const grokPromptsHelp = `Usage:
+  kck grok prompts (<session-id> | --session-id ID | --tab SEL | --tab-index N | --this-tab)
+    [--first] [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+  kck grok prompts [--this-window | --this-space]
+    [--first] [--recent <window>] [--limit N]
+    [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+  kck grok prompts [--recent <window>] [--limit N]
+    [--first] [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+
+Show user prompts only as compact lines:
+  [YYYY-MM-DD HH:MM:SS] prompt text…
+
+Single mode: all user prompts for one session (full history), optional text filters.
+Multi mode (no session source): newest sessions by last_active:
+
+  (no flags)              last 10 sessions that have prompts
+  --limit N               last N sessions that have prompts (N >= 1)
+  --recent Nd|Nh|Nm       all sessions with ≥1 in-window user prompt
+  --this-window           live hosts in this iTerm window (no default cap)
+  --this-space            live hosts on this macOS Mission Control desktop
+
+Session source (exactly one when scoping):
+  <session-id> / --session-id ID
+  --tab SEL             1-based index, or next|left|right|current
+  --tab-index N         0-based tab index
+  --this-tab            alias for --tab current
+  --this-window / --this-space
+
+Options:
+  --first               only the first user prompt per session
+  --main                only main-agent class sessions (alias: --main-agent)
+  --grep P              repeatable; AND; case-insensitive literal
+  --exclude Q           drop prompts matching Q
+  --head N | --tail N   mutually exclusive with each other and --first
+  --max-body N          soft-cap body runes + …
+  --recent WINDOW       Nd|Nh|Nm
+  --limit N             session cap (>= 1)
+  --color / --no-color  force ANSI on/off
+  -h,--help             show help
 `
 
 const grokMessagesHelp = `Usage: kck grok messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
@@ -62,6 +108,16 @@ Sessions with a live PID but no iTerm tab are omitted.
 Options:
   --json        machine-readable JSON (no ANSI)
   --limit N     show at most N sessions (0 = unlimited)
+  -h,--help     show help
+`
+
+const grokFocusHelp = `Usage: kck grok focus <session-id> [--index N]
+
+Focus the iTerm2 tab that already hosts this live Grok session.
+Lighter than open: never resumes or creates a window when no live host.
+
+Options:
+  --index N     select candidate N when multiple tabs host the same session
   -h,--help     show help
 `
 
@@ -224,12 +280,16 @@ func runGrok(opts Options) error {
 		return runGrokList(opts, args[1:])
 	case "open":
 		return runGrokOpen(opts, args[1:])
+	case "focus":
+		return runGrokFocus(opts, args[1:])
 	case "snapshot":
 		return runGrokSnapshot(opts, args[1:])
 	case "send":
 		return runGrokSend(opts, args[1:])
 	case "messages":
 		return runGrokMessages(opts, args[1:])
+	case "prompts":
+		return runGrokPrompts(opts, args[1:])
 	case "info":
 		return runGrokInfo(opts, args[1:])
 	case "status":
@@ -267,6 +327,35 @@ func runGrokMessages(opts Options, args []string) error {
 	err := sessions.RunMessages(args, stdout, stderr, grokHome, msgOpts)
 	if err != nil {
 		msg := strings.ReplaceAll(err.Error(), "agent-pro grok session messages", "kck grok messages")
+		return writeError(stderr, msg)
+	}
+	return nil
+}
+
+func runGrokPrompts(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	if argsHaveHelp(args) {
+		txt := strings.TrimPrefix(grokPromptsHelp, "\n")
+		if !strings.HasSuffix(txt, "\n") {
+			txt += "\n"
+		}
+		fmt.Fprint(stdout, txt)
+		return nil
+	}
+
+	grokHome := resolveGrokHome(opts)
+	promptOpts := opts.GrokPromptsOpts
+	err := sessions.RunPrompts(args, stdout, stderr, grokHome, promptOpts)
+	if err != nil {
+		msg := strings.ReplaceAll(err.Error(), "agent-pro grok session prompts", "kck grok prompts")
 		return writeError(stderr, msg)
 	}
 	return nil
@@ -338,6 +427,39 @@ func runGrokOpen(opts Options, args []string) error {
 	err := sessions.RunOpen(args, stdout, stderr, grokHome, openOpts)
 	if err != nil {
 		msg := strings.ReplaceAll(err.Error(), "agent-pro grok session open", "kck grok open")
+		return writeError(stderr, msg)
+	}
+	return nil
+}
+
+func runGrokFocus(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	if argsHaveHelp(args) {
+		txt := strings.TrimPrefix(grokFocusHelp, "\n")
+		if !strings.HasSuffix(txt, "\n") {
+			txt += "\n"
+		}
+		fmt.Fprint(stdout, txt)
+		return nil
+	}
+
+	grokHome := strings.TrimSpace(opts.GrokHome)
+	if grokHome == "" {
+		grokHome = agenttty.GrokHome()
+	}
+
+	focusOpts := opts.GrokFocusOpts
+	err := sessions.RunFocus(args, stdout, grokHome, focusOpts)
+	if err != nil {
+		msg := strings.ReplaceAll(err.Error(), "agent-pro grok session focus", "kck grok focus")
 		return writeError(stderr, msg)
 	}
 	return nil

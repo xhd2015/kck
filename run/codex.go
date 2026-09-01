@@ -18,9 +18,11 @@ const codexHelp = `Usage: kck codex <command> [ARGS]
 Commands:
   list …       list Codex ids hosted in iTerm tabs
   open …       focus hosting tab or resume (--tab / --tab-index / <id>)
+  focus …      focus hosting iTerm tab only when live (no resume)
   snapshot …   capture visible pane text (--tab / --tab-index / <id>)
   send …       type text into hosting pane (--session-id / --tab / --open)
   messages …   print recent chat messages (--limit / --grep / --offset-from-end)
+  prompts …    list user prompts (--first / --grep / --this-window / --tab)
   info …       show session detail + Active block
   status …     PID liveness + rollout path
   resolve …    resolve Codex session id (ancestor walk or --tab)
@@ -38,6 +40,16 @@ Sessions with a live PID but no iTerm tab are omitted.
 Options:
   --json        machine-readable JSON (no ANSI)
   --limit N     show at most N sessions (0 = unlimited)
+  -h,--help     show help
+`
+
+const codexFocusHelp = `Usage: kck codex focus <session-id> [--index N]
+
+Focus the iTerm2 tab that already hosts this live Codex session.
+Lighter than open: never resumes or creates a window when no live host.
+
+Options:
+  --index N     select candidate N when multiple tabs host the same session
   -h,--help     show help
 `
 
@@ -150,6 +162,37 @@ Tab discovery matches: kool iterm2 window status.
 Multiple unrelated Codex sessions on the same tab refuse.
 `
 
+const codexPromptsHelp = `Usage:
+  kck codex prompts (<session-id> | --session-id ID | --tab SEL | --tab-index N | --this-tab)
+    [--first] [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+  kck codex prompts [--this-window | --this-space]
+    [--first] [--recent <window>] [--limit N]
+    [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+  kck codex prompts [--recent <window>] [--limit N]
+    [--first] [--grep P]... [--exclude Q] [--head N | --tail N] [--max-body N]
+    [--color|--no-color]
+
+Show user prompts only as compact lines (same shape as kck grok prompts).
+
+Session source (exactly one when scoping):
+  <session-id> / --session-id ID
+  --tab SEL | --tab-index N | --this-tab
+  --this-window / --this-space
+
+Options:
+  --first               only the first user prompt per session
+  --grep P              repeatable; AND; case-insensitive literal
+  --exclude Q           drop prompts matching Q
+  --head N | --tail N   mutually exclusive with each other and --first
+  --max-body N          soft-cap body runes + …
+  --recent WINDOW       Nd|Nh|Nm
+  --limit N             session cap (>= 1)
+  --color / --no-color  force ANSI on/off
+  -h,--help             show help
+`
+
 const codexMessagesHelp = `Usage: kck codex messages (<session-id> | --tab SEL | --tab-index N) [OPTIONS]
 
 Print the most recent coalesced Codex chat messages (msgfmt-style),
@@ -222,12 +265,16 @@ func runCodex(opts Options) error {
 		return runCodexList(opts, args[1:])
 	case "open":
 		return runCodexOpen(opts, args[1:])
+	case "focus":
+		return runCodexFocus(opts, args[1:])
 	case "snapshot":
 		return runCodexSnapshot(opts, args[1:])
 	case "send":
 		return runCodexSend(opts, args[1:])
 	case "messages":
 		return runCodexMessages(opts, args[1:])
+	case "prompts":
+		return runCodexPrompts(opts, args[1:])
 	case "info":
 		return runCodexInfo(opts, args[1:])
 	case "status":
@@ -239,6 +286,35 @@ func runCodex(opts Options) error {
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown codex command: %s", args[0]))
 	}
+}
+
+func runCodexPrompts(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	if argsHaveHelp(args) {
+		txt := strings.TrimPrefix(codexPromptsHelp, "\n")
+		if !strings.HasSuffix(txt, "\n") {
+			txt += "\n"
+		}
+		fmt.Fprint(stdout, txt)
+		return nil
+	}
+
+	codexHome := resolveCodexHome(opts)
+	promptOpts := opts.CodexPromptsOpts
+	err := sessions.RunPrompts(args, stdout, stderr, codexHome, promptOpts)
+	if err != nil {
+		msg := strings.ReplaceAll(err.Error(), "agent-pro codex session prompts", "kck codex prompts")
+		return writeError(stderr, msg)
+	}
+	return nil
 }
 
 func runCodexMessages(opts Options, args []string) error {
@@ -329,6 +405,35 @@ func runCodexOpen(opts Options, args []string) error {
 	if err != nil {
 		msg := strings.ReplaceAll(err.Error(), "agent-pro codex session open", "kck codex open")
 		msg = strings.ReplaceAll(msg, "agent-pro codex session focus", "kck codex open")
+		return writeError(stderr, msg)
+	}
+	return nil
+}
+
+func runCodexFocus(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	if argsHaveHelp(args) {
+		txt := strings.TrimPrefix(codexFocusHelp, "\n")
+		if !strings.HasSuffix(txt, "\n") {
+			txt += "\n"
+		}
+		fmt.Fprint(stdout, txt)
+		return nil
+	}
+
+	codexHome := resolveCodexHome(opts)
+	focusOpts := opts.CodexFocusOpts
+	err := sessions.RunFocus(args, stdout, codexHome, focusOpts)
+	if err != nil {
+		msg := strings.ReplaceAll(err.Error(), "agent-pro codex session focus", "kck codex focus")
 		return writeError(stderr, msg)
 	}
 	return nil
