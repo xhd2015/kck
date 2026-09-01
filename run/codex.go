@@ -24,6 +24,7 @@ Commands:
   info …       show session detail + Active block
   status …     PID liveness + rollout path
   resolve …    resolve Codex session id (ancestor walk or --tab)
+  pickup …     new empty session staged from a base session (kck-pickup-a-session)
 
 Run 'kck codex <command> --help' for command-specific options.
 `
@@ -233,6 +234,8 @@ func runCodex(opts Options) error {
 		return runCodexStatus(opts, args[1:])
 	case "resolve":
 		return runCodexResolve(opts, args[1:])
+	case "pickup":
+		return runCodexPickup(opts, args[1:])
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown codex command: %s", args[0]))
 	}

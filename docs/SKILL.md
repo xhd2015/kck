@@ -3,7 +3,7 @@ name: kck
 description: >-
   kck lists live iTerm agent panes (or agent-run store sessions with --home)
   and operates Grok/Codex sessions: open/focus, snapshot, send, messages, info,
-  status, resolve. Use when the user runs kck, asks about live agent tabs, or
+  status, resolve, pickup. Use when the user runs kck, asks about live agent tabs, or
   /kck. Load topics: kck skill --show <topic>
 ---
 
@@ -18,9 +18,9 @@ This skill is an **index**. Load detailed guidance with
   stream rows as windows are scanned.
 - **`--home PATH`** — list agent-run store sessions under `PATH/sessions`.
 - **`kck grok …`** — list iTerm-hosted Grok ids, open/focus, snapshot, send,
-  messages, info, status, resolve (thin wrappers over agent-pro session helpers).
+  messages, info, status, resolve, pickup (thin wrappers over agent-pro session helpers).
 - **`kck codex …`** — `list`, `open`, `snapshot`, `send`, `messages`, `info`,
-  `status`, `resolve` (same shapes as the Grok counterparts where applicable;
+  `status`, `resolve`, `pickup` (same shapes as the Grok counterparts where applicable;
   multi-hit on one tab still refuses; Codex status File is always no).
 
 Domain flags live in `kck --help`, `kck grok <cmd> --help`, and
@@ -52,6 +52,9 @@ not a full flag encyclopedia.
 - `status` — liveness + session path; Codex: PID-only (`kck codex status`)
 - `resolve` — resolve session id (ancestor walk or `--tab` / `--tab-index`);
   Codex: `kck codex resolve` with the same flags
+- `pickup` — open a new empty session staged with a kck-pickup-a-session draft
+  from a base session (not a native fork); Codex: `kck codex pickup`
+  (agent skill: `kck skill --show kck-pickup-a-session`)
 
 ## Retrieve topics
 

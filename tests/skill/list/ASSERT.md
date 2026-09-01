@@ -10,10 +10,12 @@ list
 messages
 open
 overview
+pickup
 resolve
 send
 snapshot
 status
+kck-pickup-a-session
 ```
 
 ## Exit Code
@@ -41,10 +43,12 @@ list
 messages
 open
 overview
+pickup
 resolve
 send
 snapshot
 status
+kck-pickup-a-session
 `)
 }
 ```

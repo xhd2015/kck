@@ -83,6 +83,8 @@ type Options struct {
 	GrokLiveOpts *sessions.LiveOptions
 	// GrokResolveOpts injects resolve ancestor/tab probes for L2. nil → production.
 	GrokResolveOpts *sessions.ResolveOpts
+	// GrokPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
+	GrokPickupOpts *PickupOpts
 	// GrokNow for info relative timestamps. Zero → time.Now().
 	GrokNow time.Time
 
@@ -110,6 +112,8 @@ type Options struct {
 	CodexLiveOpts *codexsessions.LiveOptions
 	// CodexMessagesOpts injects messages tab-resolve probes for L2. nil → production.
 	CodexMessagesOpts *codexsessions.MessagesOpts
+	// CodexPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
+	CodexPickupOpts *PickupOpts
 	// CodexNow for info relative timestamps. Zero → time.Now().
 	CodexNow time.Time
 }
@@ -123,6 +127,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck grok info <session-id> [OPTIONS]
        kck grok status <session-id> [OPTIONS]
        kck grok resolve [OPTIONS]
+       kck grok pickup "msg..." --session-id <id> [OPTIONS]
        kck codex list [OPTIONS]
        kck codex open <session-id> [OPTIONS]
        kck codex snapshot <session-id> [OPTIONS]
@@ -131,6 +136,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck codex info <session-id> [OPTIONS]
        kck codex status <session-id> [OPTIONS]
        kck codex resolve [OPTIONS]
+       kck codex pickup "msg..." --session-id <id> [OPTIONS]
        kck skill --show|--list|--install …
 
 Default mode: list live iTerm agent panes (streams rows as windows are scanned).
@@ -145,6 +151,7 @@ Commands:
   grok info …              show session detail + Active block
   grok status …            dual-signal liveness + session path
   grok resolve …           resolve Grok session id (ancestor walk or --tab)
+  grok pickup …            new empty session staged from a base session (kck-pickup-a-session)
   codex list …             list Codex ids hosted in iTerm tabs
   codex open …             focus hosting tab or resume (--tab / --tab-index / <id>)
   codex snapshot …         capture visible pane text (--tab / --tab-index / <id>)
@@ -153,6 +160,7 @@ Commands:
   codex info …             detail + Active; PID liveness
   codex status …           PID liveness + rollout path
   codex resolve …          resolve Codex session id (ancestor walk or --tab)
+  codex pickup …           new empty session staged from a base session (kck-pickup-a-session)
   skill                    show/install embedded skill docs
 
 Options:

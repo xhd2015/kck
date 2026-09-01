@@ -37,6 +37,7 @@ skill/
 ├── show/
 │   ├── root/
 │   ├── topic/
+│   ├── pickup-agent/
 │   └── unknown/
 ```
 
@@ -46,9 +47,10 @@ skill/
 |---|---|
 | `help/root-lists-skill/` | `kck -h` mentions `skill`. |
 | `help/skill-usage/` | `kck skill -h` usage + Available topics. |
-| `list/` | skill name + topic paths. |
+| `list/` | skill name + topic paths + `kck-pickup-a-session`. |
 | `show/root/` | `name: kck`; retrieve example; no `--cursor`/`--global`. |
 | `show/topic/` | `name: kck/send`. |
+| `show/pickup-agent/` | `name: kck-pickup-a-session`. |
 | `show/unknown/` | `Error: kck skill:` + unknown/missing topic. |
 
 ## How to Run

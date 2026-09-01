@@ -24,6 +24,7 @@ Commands:
   info …       show session detail + Active block
   status …     dual-signal liveness + session path
   resolve …    resolve Grok session id (ancestor walk or --tab)
+  pickup …     new empty session staged from a base session (kck-pickup-a-session)
 
 Run 'kck grok <command> --help' for command-specific options.
 `
@@ -235,6 +236,8 @@ func runGrok(opts Options) error {
 		return runGrokStatus(opts, args[1:])
 	case "resolve":
 		return runGrokResolve(opts, args[1:])
+	case "pickup":
+		return runGrokPickup(opts, args[1:])
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown grok command: %s", args[0]))
 	}
