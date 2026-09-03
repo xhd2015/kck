@@ -89,6 +89,8 @@ type Options struct {
 	GrokResolveOpts *sessions.ResolveOpts
 	// GrokPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
 	GrokPickupOpts *PickupOpts
+	// GrokNewOpts injects new-session launch/wait hooks for L2. nil → production.
+	GrokNewOpts *NewOpts
 	// GrokNow for info relative timestamps. Zero → time.Now().
 	GrokNow time.Time
 
@@ -122,6 +124,8 @@ type Options struct {
 	CodexPromptsOpts *codexsessions.PromptsOpts
 	// CodexPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
 	CodexPickupOpts *PickupOpts
+	// CodexNewOpts injects new-session launch/wait hooks for L2. nil → production.
+	CodexNewOpts *NewOpts
 	// CodexNow for info relative timestamps. Zero → time.Now().
 	CodexNow time.Time
 }
@@ -138,6 +142,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck grok status <session-id> [OPTIONS]
        kck grok resolve [OPTIONS]
        kck grok pickup "msg..." --session-id <id> [OPTIONS]
+       kck grok new "msg..." [OPTIONS]
        kck codex list [OPTIONS]
        kck codex open <session-id> [OPTIONS]
        kck codex focus <session-id> [OPTIONS]
@@ -149,35 +154,38 @@ const helpText = `Usage: kck [OPTIONS]
        kck codex status <session-id> [OPTIONS]
        kck codex resolve [OPTIONS]
        kck codex pickup "msg..." --session-id <id> [OPTIONS]
-       kck skill --show|--list|--install …
+       kck codex new "msg..." [OPTIONS]
+       kck skill --show|--list|--install
 
 Default mode: list live iTerm agent panes (streams rows as windows are scanned).
 With --home: list agent-run store sessions under that home.
 
 Commands:
-  grok list …              list Grok ids hosted in iTerm tabs
-  grok open …              focus hosting tab or resume (--tab / --tab-index / <id>)
-  grok focus …             focus hosting tab only when live (no resume)
-  grok snapshot …          capture visible pane text (--tab / --tab-index / <id>)
-  grok send …              type text into hosting pane (--session-id / --tab / --open)
-  grok messages …          print recent chat messages (--limit / --grep / --offset-from-end)
-  grok prompts …           list user prompts (--first / --main / --grep / --this-window / --tab)
-  grok info …              show session detail + Active block
-  grok status …            dual-signal liveness + session path
-  grok resolve …           resolve Grok session id (ancestor walk or --tab)
-  grok pickup …            new empty session staged from a base session (kck-pickup-a-session)
-  codex list …             list Codex ids hosted in iTerm tabs
-  codex open …             focus hosting tab or resume (--tab / --tab-index / <id>)
-  codex focus …            focus hosting tab only when live (no resume)
-  codex snapshot …         capture visible pane text (--tab / --tab-index / <id>)
-  codex send …             type text into hosting pane (--session-id / --tab / --open)
-  codex messages …         recent coalesced chat
-  codex prompts …          list user prompts (--first / --grep / --this-window / --tab)
-  codex info …             detail + Active; PID liveness
-  codex status …           PID liveness + rollout path
-  codex resolve …          resolve Codex session id (ancestor walk or --tab)
-  codex pickup …           new empty session staged from a base session (kck-pickup-a-session)
-  skill                    show/install embedded skill docs
+  grok list       list Grok ids hosted in iTerm tabs
+  grok open       focus hosting tab or resume (--tab / --tab-index / <id>)
+  grok focus      focus hosting tab only when live (no resume)
+  grok snapshot   capture visible pane text (--tab / --tab-index / <id>)
+  grok send       type text into hosting pane (--session-id / --tab / --open)
+  grok messages   print recent chat messages (--limit / --grep / --offset-from-end)
+  grok prompts    list user prompts (--first / --main / --grep / --this-window / --tab)
+  grok info       show session detail + Active block
+  grok status     dual-signal liveness + session path
+  grok resolve    resolve Grok session id (ancestor walk or --tab)
+  grok pickup     new empty session staged from a base session (kck-pickup-a-session)
+  grok new        open a new empty Grok session via agent-run
+  codex list      list Codex ids hosted in iTerm tabs
+  codex open      focus hosting tab or resume (--tab / --tab-index / <id>)
+  codex focus     focus hosting tab only when live (no resume)
+  codex snapshot  capture visible pane text (--tab / --tab-index / <id>)
+  codex send      type text into hosting pane (--session-id / --tab / --open)
+  codex messages  recent coalesced chat
+  codex prompts   list user prompts (--first / --grep / --this-window / --tab)
+  codex info      detail + Active; PID liveness
+  codex status    PID liveness + rollout path
+  codex resolve   resolve Codex session id (ancestor walk or --tab)
+  codex pickup    new empty session staged from a base session (kck-pickup-a-session)
+  codex new       open a new empty Codex session via agent-run
+  skill           show/install embedded skill docs
 
 Options:
   -h, --help            show help message

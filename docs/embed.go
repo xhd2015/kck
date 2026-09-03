@@ -33,4 +33,5 @@ var SkillMD string
 //go:embed status
 //go:embed resolve
 //go:embed pickup
+//go:embed new
 var TreeFS embed.FS

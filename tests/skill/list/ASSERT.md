@@ -5,12 +5,15 @@
 version: 3
 ---
 kck
+focus
 info
 list
 messages
+new
 open
 overview
 pickup
+prompts
 resolve
 send
 snapshot
@@ -38,12 +41,15 @@ func Assert(t *testing.T, d *session.Doctest, req *Request, resp *Response, err 
 version: 3
 ---
 kck
+focus
 info
 list
 messages
+new
 open
 overview
 pickup
+prompts
 resolve
 send
 snapshot

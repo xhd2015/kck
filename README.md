@@ -1,6 +1,6 @@
 # kck
 
-List live iTerm agent panes and operate Grok/Codex sessions (open, focus, snapshot, send, messages, prompts, info, status, resolve, pickup). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
+List live iTerm agent panes and operate Grok/Codex sessions (open, focus, snapshot, send, messages, prompts, info, status, resolve, pickup, new). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
 
 ## Requirements
 
@@ -35,8 +35,9 @@ kck grok info <session-id>
 kck grok status <session-id>
 kck grok send "hello" --session-id <session-id>
 kck grok pickup "summarize decisions" --session-id <session-id>
+kck grok new "fix flaky auth"
 
-# Codex: list / open / send / messages / info / status / resolve / snapshot / pickup
+# Codex: list / open / send / messages / info / status / resolve / snapshot / pickup / new
 kck codex list
 kck codex open --tab 1
 kck codex send "hello" --session-id <id>
@@ -46,12 +47,14 @@ kck codex status <id>
 kck codex resolve --tab 1
 kck codex snapshot --tab 1
 kck codex pickup "extract TODOs" --tab 1
+kck codex new "extract TODOs"
 
 # embedded skill (when/why + topics)
 kck skill --list
 kck skill --show
 kck skill --show send
 kck skill --show pickup
+kck skill --show new
 ```
 
 Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command> --help`.
@@ -71,6 +74,7 @@ Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command
 | `kck grok info` / `status` | Detail + Active; dual-signal liveness |
 | `kck grok resolve` | Resolve id (ancestor walk or `--tab`) |
 | `kck grok pickup` | New empty session staged from a base session (kck-pickup-a-session) |
+| `kck grok new` | New empty Grok session via agent-run (default new terminal) |
 | `kck codex list` | Codex ids in iTerm tabs |
 | `kck codex open` | Focus hosting tab or resume |
 | `kck codex focus` | Focus live hosting tab only (no resume) |
@@ -81,6 +85,7 @@ Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command
 | `kck codex info` / `status` | Detail + Active; PID liveness (File always no) |
 | `kck codex resolve` | Resolve Codex id (ancestor walk or `--tab`) |
 | `kck codex pickup` | New empty session staged from a base session (kck-pickup-a-session) |
+| `kck codex new` | New empty Codex session via agent-run (default new terminal) |
 | `kck skill` | Show/install embedded skill docs |
 
 ## Docs

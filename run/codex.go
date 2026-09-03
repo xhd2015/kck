@@ -16,17 +16,18 @@ import (
 const codexHelp = `Usage: kck codex <command> [ARGS]
 
 Commands:
-  list …       list Codex ids hosted in iTerm tabs
-  open …       focus hosting tab or resume (--tab / --tab-index / <id>)
-  focus …      focus hosting iTerm tab only when live (no resume)
-  snapshot …   capture visible pane text (--tab / --tab-index / <id>)
-  send …       type text into hosting pane (--session-id / --tab / --open)
-  messages …   print recent chat messages (--limit / --grep / --offset-from-end)
-  prompts …    list user prompts (--first / --grep / --this-window / --tab)
-  info …       show session detail + Active block
-  status …     PID liveness + rollout path
-  resolve …    resolve Codex session id (ancestor walk or --tab)
-  pickup …     new empty session staged from a base session (kck-pickup-a-session)
+  list      list Codex ids hosted in iTerm tabs
+  open      focus hosting tab or resume (--tab / --tab-index / <id>)
+  focus     focus hosting iTerm tab only when live (no resume)
+  snapshot  capture visible pane text (--tab / --tab-index / <id>)
+  send      type text into hosting pane (--session-id / --tab / --open)
+  messages  print recent chat messages (--limit / --grep / --offset-from-end)
+  prompts   list user prompts (--first / --grep / --this-window / --tab)
+  info      show session detail + Active block
+  status    PID liveness + rollout path
+  resolve   resolve Codex session id (ancestor walk or --tab)
+  pickup    new empty session staged from a base session (kck-pickup-a-session)
+  new       open a new empty Codex session via agent-run
 
 Run 'kck codex <command> --help' for command-specific options.
 `
@@ -283,6 +284,8 @@ func runCodex(opts Options) error {
 		return runCodexResolve(opts, args[1:])
 	case "pickup":
 		return runCodexPickup(opts, args[1:])
+	case "new":
+		return runCodexNew(opts, args[1:])
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown codex command: %s", args[0]))
 	}

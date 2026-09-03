@@ -3,7 +3,7 @@ name: kck
 description: >-
   kck lists live iTerm agent panes (or agent-run store sessions with --home)
   and operates Grok/Codex sessions: open, focus, snapshot, send, messages,
-  prompts, info, status, resolve, pickup. Use when the user runs kck, asks about
+  prompts, info, status, resolve, pickup, new. Use when the user runs kck, asks about
   live agent tabs, or /kck. Load topics: kck skill --show <topic>
 ---
 
@@ -18,10 +18,10 @@ This skill is an **index**. Load detailed guidance with
   stream rows as windows are scanned.
 - **`--home PATH`** — list agent-run store sessions under `PATH/sessions`.
 - **`kck grok …`** — list iTerm-hosted Grok ids, open, focus, snapshot, send,
-  messages, prompts, info, status, resolve, pickup (thin wrappers over agent-pro
+  messages, prompts, info, status, resolve, pickup, new (thin wrappers over agent-pro
   session helpers).
 - **`kck codex …`** — `list`, `open`, `focus`, `snapshot`, `send`, `messages`,
-  `prompts`, `info`, `status`, `resolve`, `pickup` (same shapes as the Grok
+  `prompts`, `info`, `status`, `resolve`, `pickup`, `new` (same shapes as the Grok
   counterparts where applicable; multi-hit on one tab still refuses; Codex status
   File is always no).
 
@@ -60,6 +60,8 @@ not a full flag encyclopedia.
 - `pickup` — open a new empty session staged with a kck-pickup-a-session draft
   from a base session (not a native fork); Codex: `kck codex pickup`
   (agent skill: `kck skill --show kck-pickup-a-session`)
+- `new` — open a new empty session via agent-run (brainstorm-prefixed prompt;
+  default new terminal; `--here` silent); Codex: `kck codex new`
 
 ## Retrieve topics
 

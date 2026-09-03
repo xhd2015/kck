@@ -16,17 +16,18 @@ import (
 const grokHelp = `Usage: kck grok <command> [ARGS]
 
 Commands:
-  list …       list Grok session ids hosted in iTerm tabs
-  open …       focus hosting iTerm tab, or resume (--tab / --tab-index / <id>)
-  focus …      focus hosting iTerm tab only when live (no resume)
-  snapshot …   capture visible pane text (--tab / --tab-index / <id>)
-  send …       type text into hosting pane (--session-id / --tab / --open)
-  messages …   print recent chat messages (--limit / --grep / --offset-from-end)
-  prompts …    list user prompts (--first / --main / --grep / --this-window / --tab)
-  info …       show session detail + Active block
-  status …     dual-signal liveness + session path
-  resolve …    resolve Grok session id (ancestor walk or --tab)
-  pickup …     new empty session staged from a base session (kck-pickup-a-session)
+  list      list Grok session ids hosted in iTerm tabs
+  open      focus hosting iTerm tab, or resume (--tab / --tab-index / <id>)
+  focus     focus hosting iTerm tab only when live (no resume)
+  snapshot  capture visible pane text (--tab / --tab-index / <id>)
+  send      type text into hosting pane (--session-id / --tab / --open)
+  messages  print recent chat messages (--limit / --grep / --offset-from-end)
+  prompts   list user prompts (--first / --main / --grep / --this-window / --tab)
+  info      show session detail + Active block
+  status    dual-signal liveness + session path
+  resolve   resolve Grok session id (ancestor walk or --tab)
+  pickup    new empty session staged from a base session (kck-pickup-a-session)
+  new       open a new empty Grok session via agent-run
 
 Run 'kck grok <command> --help' for command-specific options.
 `
@@ -298,6 +299,8 @@ func runGrok(opts Options) error {
 		return runGrokResolve(opts, args[1:])
 	case "pickup":
 		return runGrokPickup(opts, args[1:])
+	case "new":
+		return runGrokNew(opts, args[1:])
 	default:
 		return writeError(stderr, fmt.Sprintf("unknown grok command: %s", args[0]))
 	}
