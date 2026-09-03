@@ -18,6 +18,7 @@ resolve
 send
 snapshot
 status
+wait
 kck-pickup-a-session
 ```
 
@@ -54,6 +55,7 @@ resolve
 send
 snapshot
 status
+wait
 kck-pickup-a-session
 `)
 }

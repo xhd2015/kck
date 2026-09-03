@@ -1,6 +1,6 @@
 # kck
 
-List live iTerm agent panes and operate Grok/Codex sessions (open, focus, snapshot, send, messages, prompts, info, status, resolve, pickup, new). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
+List live iTerm agent panes and operate Grok/Codex sessions (open, focus, snapshot, send, messages, prompts, info, status, wait, resolve, pickup, new). Thin CLI over [agent-pro](https://github.com/xhd2015/agent-pro) session helpers; agent-run-managed sessions prefer agent-run for send/resume.
 
 ## Requirements
 
@@ -33,17 +33,19 @@ kck grok list
 # inspect / operate a session
 kck grok info <session-id>
 kck grok status <session-id>
+kck grok wait <session-id>
 kck grok send "hello" --session-id <session-id>
 kck grok pickup "summarize decisions" --session-id <session-id>
 kck grok new "fix flaky auth"
 
-# Codex: list / open / send / messages / info / status / resolve / snapshot / pickup / new
+# Codex: list / open / send / messages / info / status / wait / resolve / snapshot / pickup / new
 kck codex list
 kck codex open --tab 1
 kck codex send "hello" --session-id <id>
 kck codex messages <id>
 kck codex info <id>
 kck codex status <id>
+kck codex wait <id>
 kck codex resolve --tab 1
 kck codex snapshot --tab 1
 kck codex pickup "extract TODOs" --tab 1
@@ -72,6 +74,7 @@ Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command
 | `kck grok messages` | Recent coalesced chat |
 | `kck grok prompts` | User prompts (`--first` / `--main` / `--grep` / `--this-window`) |
 | `kck grok info` / `status` | Detail + Active; dual-signal liveness |
+| `kck grok wait` | Block until current turn finishes (`updates.jsonl`) |
 | `kck grok resolve` | Resolve id (ancestor walk or `--tab`) |
 | `kck grok pickup` | New empty session staged from a base session (kck-pickup-a-session) |
 | `kck grok new` | New empty Grok session via agent-run (default new terminal) |
@@ -83,6 +86,7 @@ Domain flags: `kck --help`, `kck grok <command> --help`, and `kck codex <command
 | `kck codex messages` | Recent coalesced chat |
 | `kck codex prompts` | User prompts (`--first` / `--grep` / `--this-window`) |
 | `kck codex info` / `status` | Detail + Active; PID liveness (File always no) |
+| `kck codex wait` | Block until current turn finishes (rollout JSONL) |
 | `kck codex resolve` | Resolve Codex id (ancestor walk or `--tab`) |
 | `kck codex pickup` | New empty session staged from a base session (kck-pickup-a-session) |
 | `kck codex new` | New empty Codex session via agent-run (default new terminal) |
@@ -101,6 +105,7 @@ kck skill --show snapshot
 kck skill --show messages
 kck skill --show info
 kck skill --show status
+kck skill --show wait
 kck skill --show resolve
 kck skill --show pickup
 ```

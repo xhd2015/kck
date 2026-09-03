@@ -3,7 +3,7 @@ name: kck
 description: >-
   kck lists live iTerm agent panes (or agent-run store sessions with --home)
   and operates Grok/Codex sessions: open, focus, snapshot, send, messages,
-  prompts, info, status, resolve, pickup, new. Use when the user runs kck, asks about
+  prompts, info, status, wait, resolve, pickup, new. Use when the user runs kck, asks about
   live agent tabs, or /kck. Load topics: kck skill --show <topic>
 ---
 
@@ -18,10 +18,10 @@ This skill is an **index**. Load detailed guidance with
   stream rows as windows are scanned.
 - **`--home PATH`** — list agent-run store sessions under `PATH/sessions`.
 - **`kck grok …`** — list iTerm-hosted Grok ids, open, focus, snapshot, send,
-  messages, prompts, info, status, resolve, pickup, new (thin wrappers over agent-pro
+  messages, prompts, info, status, wait, resolve, pickup, new (thin wrappers over agent-pro
   session helpers).
 - **`kck codex …`** — `list`, `open`, `focus`, `snapshot`, `send`, `messages`,
-  `prompts`, `info`, `status`, `resolve`, `pickup`, `new` (same shapes as the Grok
+  `prompts`, `info`, `status`, `wait`, `resolve`, `pickup`, `new` (same shapes as the Grok
   counterparts where applicable; multi-hit on one tab still refuses; Codex status
   File is always no).
 
@@ -34,9 +34,10 @@ not a full flag encyclopedia.
 1. Orient with bare `kck` (live multi-agent) or `kck grok list` (Grok ids in
    iTerm only). Use `kck --home <agent-run-home>` for the agent-run store.
 2. Use `--needs-confirm` / `--sendable` when filtering attention vs idle.
-3. For a known Grok session: `kck grok info|status <id>`, then
-   `open` / `snapshot` / `messages` / `send` as needed. When the id is unknown
-   in-context, `kck grok resolve` (ancestor or `--tab`) yields a bare id.
+3. For a known Grok/Codex session: `kck grok|codex info|status <id>`, then
+   `wait` / `open` / `snapshot` / `messages` / `send` as needed. When the id is unknown
+   in-context, `kck grok|codex resolve` (ancestor or `--tab`) yields a bare id.
+   Prefer `kck grok|codex wait <id>` over provider `monitor` for turn completion.
 4. Prefer `kck grok send "…" --session-id <id>` over inventing list-mode send
    flags (root list has no `--send`).
 
@@ -55,6 +56,7 @@ not a full flag encyclopedia.
   Codex: `kck codex prompts`
 - `info` — session detail + Active block; Codex: `kck codex info` (File always no)
 - `status` — liveness + session path; Codex: PID-only (`kck codex status`)
+- `wait` — block until current Grok turn finishes (`updates.jsonl`); error if not running
 - `resolve` — resolve session id (ancestor walk or `--tab` / `--tab-index`);
   Codex: `kck codex resolve` with the same flags
 - `pickup` — open a new empty session staged with a kck-pickup-a-session draft

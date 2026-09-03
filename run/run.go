@@ -85,6 +85,8 @@ type Options struct {
 	GrokListLiveOpts *sessions.ListLiveOpts
 	// GrokLiveOpts injects Status/Info live PID probes for L2. nil → production.
 	GrokLiveOpts *sessions.LiveOptions
+	// GrokWaitOpts injects wait turn probes for L2. nil → production.
+	GrokWaitOpts *sessions.WaitOpts
 	// GrokResolveOpts injects resolve ancestor/tab probes for L2. nil → production.
 	GrokResolveOpts *sessions.ResolveOpts
 	// GrokPickupOpts injects pickup resolve/launch hooks for L2. nil → production.
@@ -118,6 +120,8 @@ type Options struct {
 	CodexResolveOpts *codexsessions.ResolveOpts
 	// CodexLiveOpts injects Status/Info live PID probes for L2. nil → production.
 	CodexLiveOpts *codexsessions.LiveOptions
+	// CodexWaitOpts injects wait turn probes for L2. nil → production.
+	CodexWaitOpts *codexsessions.WaitOpts
 	// CodexMessagesOpts injects messages tab-resolve probes for L2. nil → production.
 	CodexMessagesOpts *codexsessions.MessagesOpts
 	// CodexPromptsOpts injects prompts host/tab probes for L2. nil → production.
@@ -140,6 +144,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck grok prompts [OPTIONS]
        kck grok info <session-id> [OPTIONS]
        kck grok status <session-id> [OPTIONS]
+       kck grok wait <session-id> [OPTIONS]
        kck grok resolve [OPTIONS]
        kck grok pickup "msg..." --session-id <id> [OPTIONS]
        kck grok new "msg..." [OPTIONS]
@@ -152,6 +157,7 @@ const helpText = `Usage: kck [OPTIONS]
        kck codex prompts [OPTIONS]
        kck codex info <session-id> [OPTIONS]
        kck codex status <session-id> [OPTIONS]
+       kck codex wait <session-id> [OPTIONS]
        kck codex resolve [OPTIONS]
        kck codex pickup "msg..." --session-id <id> [OPTIONS]
        kck codex new "msg..." [OPTIONS]
@@ -170,6 +176,7 @@ Commands:
   grok prompts    list user prompts (--first / --main / --grep / --this-window / --tab)
   grok info       show session detail + Active block
   grok status     dual-signal liveness + session path
+  grok wait       block until current turn finishes (updates.jsonl)
   grok resolve    resolve Grok session id (ancestor walk or --tab)
   grok pickup     new empty session staged from a base session (kck-pickup-a-session)
   grok new        open a new empty Grok session via agent-run
@@ -182,6 +189,7 @@ Commands:
   codex prompts   list user prompts (--first / --grep / --this-window / --tab)
   codex info      detail + Active; PID liveness
   codex status    PID liveness + rollout path
+  codex wait      block until current turn finishes (rollout JSONL)
   codex resolve   resolve Codex session id (ancestor walk or --tab)
   codex pickup    new empty session staged from a base session (kck-pickup-a-session)
   codex new       open a new empty Codex session via agent-run

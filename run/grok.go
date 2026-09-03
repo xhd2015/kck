@@ -25,6 +25,7 @@ Commands:
   prompts   list user prompts (--first / --main / --grep / --this-window / --tab)
   info      show session detail + Active block
   status    dual-signal liveness + session path
+  wait      block until current turn finishes (updates.jsonl)
   resolve   resolve Grok session id (ancestor walk or --tab)
   pickup    new empty session staged from a base session (kck-pickup-a-session)
   new       open a new empty Grok session via agent-run
@@ -234,6 +235,19 @@ Options:
   -h,--help     show help
 `
 
+const grokWaitHelp = `Usage: kck grok wait <session-id> [OPTIONS]
+
+Block until the current turn finishes, or error if the session is not running.
+
+Turn state is read from updates.jsonl (user_message_chunk vs turn_completed),
+not from screen/TTY idle. Mid-turn waits for turn_completed; already outside
+a turn returns immediately while the session stays running.
+
+Options:
+  --timeout DUR   max wait (default 30m; Go duration, e.g. 30s, 5m, 1h)
+  -h,--help       show help
+`
+
 const grokResolveHelp = `Usage: kck grok resolve [OPTIONS]
 
 Resolve a Grok session id either by walking ancestors to the nearest
@@ -295,6 +309,8 @@ func runGrok(opts Options) error {
 		return runGrokInfo(opts, args[1:])
 	case "status":
 		return runGrokStatus(opts, args[1:])
+	case "wait":
+		return runGrokWait(opts, args[1:])
 	case "resolve":
 		return runGrokResolve(opts, args[1:])
 	case "pickup":
@@ -657,6 +673,70 @@ func runGrokStatus(opts Options, args []string) error {
 		return nil
 	}
 	fmt.Fprintln(stdout, sessions.FormatStatusText(st))
+	return nil
+}
+
+func runGrokWait(opts Options, args []string) error {
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = io.Discard
+	}
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = io.Discard
+	}
+
+	var timeoutStr string
+	remain, err := lessflags.String("--timeout", &timeoutStr).
+		HelpFunc("-h,--help", func() {}).
+		HelpNoExit().
+		Parse(args)
+	if err != nil {
+		if err == lessflags.ErrHelp {
+			txt := strings.TrimPrefix(grokWaitHelp, "\n")
+			if !strings.HasSuffix(txt, "\n") {
+				txt += "\n"
+			}
+			fmt.Fprint(stdout, txt)
+			return nil
+		}
+		return writeError(stderr, err.Error())
+	}
+	if len(remain) != 1 {
+		return writeError(stderr, fmt.Sprintf("expected exactly one session id, got %d arguments", len(remain)))
+	}
+	sessionID := strings.TrimSpace(remain[0])
+	if sessionID == "" {
+		return writeError(stderr, "session id is required")
+	}
+
+	var timeout time.Duration
+	if strings.TrimSpace(timeoutStr) != "" {
+		timeout, err = time.ParseDuration(timeoutStr)
+		if err != nil {
+			return writeError(stderr, fmt.Sprintf("invalid --timeout: %v", err))
+		}
+		if timeout <= 0 {
+			return writeError(stderr, "--timeout must be > 0")
+		}
+	}
+
+	waitOpts := sessions.WaitOpts{Timeout: timeout, Live: opts.GrokLiveOpts}
+	if opts.GrokWaitOpts != nil {
+		waitOpts = *opts.GrokWaitOpts
+		if timeout > 0 {
+			waitOpts.Timeout = timeout
+		}
+		if waitOpts.Live == nil {
+			waitOpts.Live = opts.GrokLiveOpts
+		}
+	}
+
+	res, err := sessions.Wait(resolveGrokHome(opts), sessionID, waitOpts)
+	if err != nil {
+		return writeError(stderr, err.Error())
+	}
+	fmt.Fprintf(stdout, "reason: %s\nsession-id: %s\n", res.Reason, res.SessionID)
 	return nil
 }
 

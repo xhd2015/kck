@@ -31,6 +31,7 @@ var SkillMD string
 //go:embed prompts
 //go:embed info
 //go:embed status
+//go:embed wait
 //go:embed resolve
 //go:embed pickup
 //go:embed new
